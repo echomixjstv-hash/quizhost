@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Team Quiz - Second Screen</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    margin:0;
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    font-family:Arial,sans-serif;
+
+    background:#101010;
+
+    color:white;
+}
+
+
+.screen{
+
+    width:100%;
+    height:100vh;
+
+    position:relative;
+
+    padding:20px;
+}
+
+
+/* =========================================================
+   TEAM SCORES
+========================================================= */
+
+.score-left,
+.score-right{
+
+    position:absolute;
+
+    top:25px;
+
+    width:230px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    background:#202020;
+
+    z-index:20;
+}
+
+
+.score-left{
+
+    left:25px;
+
+    border:4px solid #3498db;
+}
+
+
+.score-right{
+
+    right:25px;
+
+    border:4px solid #e74c3c;
+}
+
+
+.score-name{
+
+    font-size:25px;
+
+    font-weight:bold;
+}
+
+
+.score-number{
+
+    font-size:65px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    margin-top:8px;
+}
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.question-box{
+
+    position:absolute;
+
+    top:25px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:min(850px,55%);
+
+    min-height:95px;
+
+    padding:16px 25px;
+
+    border-radius:18px;
+
+    background:#202020;
+
+    border:4px solid #f1c40f;
+
+    text-align:center;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:15;
+
+    box-shadow:
+        0 0 15px rgba(241,196,15,.25);
+
+    transition:
+        box-shadow .3s ease;
+}
+
+
+.question-box.active{
+
+    box-shadow:
+        0 0 15px #f1c40f,
+        0 0 35px rgba(241,196,15,.45);
+}
+
+
+#questionText{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    line-height:1.25;
+
+    word-wrap:break-word;
+
+    overflow-wrap:break-word;
+}
+
+
+/* =========================================================
+   TYPING CURSOR
+========================================================= */
+
+#questionText.typing::after{
+
+    content:"|";
+
+    margin-left:3px;
+
+    animation:cursorBlink .6s infinite;
+}
+
+
+@keyframes cursorBlink{
+
+    0%,50%{
+        opacity:1;
+    }
+
+    51%,100%{
+        opacity:0;
+    }
+
+}
+
+
+/* =========================================================
+   TEAM BUZZ BOTTOM
+========================================================= */
+
+.center-team{
+
+    position:absolute;
+
+    bottom:18px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:370px;
+
+    min-height:155px;
+
+    padding:12px 25px;
+
+    border-radius:22px;
+
+    text-align:center;
+
+    background:#202020;
+
+    display:none;
+
+    z-index:30;
+}
+
+
+.center-team.team1{
+
+    border:5px solid #3498db;
+
+    color:#3498db;
+}
+
+
+.center-team.team2{
+
+    border:5px solid #e74c3c;
+
+    color:#e74c3c;
+}
+
+
+.center-team.blink{
+
+    display:block;
+
+    animation:centerBlink .7s infinite;
+}
+
+
+@keyframes centerBlink{
+
+    0%,100%{
+
+        transform:
+            translateX(-50%)
+            scale(1);
+
+        box-shadow:
+            0 0 5px transparent;
+    }
+
+    50%{
+
+        transform:
+            translateX(-50%)
+            scale(1.06);
+
+        box-shadow:
+            0 0 20px currentColor,
+            0 0 50px currentColor,
+            0 0 80px currentColor;
+
+        border-color:white;
+    }
+
+}
+
+
+/* =========================================================
+   TEAM BUZZ TEXT
+========================================================= */
+
+.center-team-name{
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    line-height:1.1;
+}
+
+
+.team-buzz-label{
+
+    margin-top:4px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+}
+
+
+.center-team-status{
+
+    margin-top:4px;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:white;
+}
+
+
+/* =========================================================
+   TIMER INSIDE TEAM BUZZ
+========================================================= */
+
+.team-timer{
+
+    display:none;
+
+    margin:7px auto 0;
+
+    width:75px;
+
+    padding:5px 8px;
+
+    border-radius:10px;
+
+    border:3px solid #f1c40f;
+
+    background:#151515;
+
+    color:#f1c40f;
+
+    text-align:center;
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    line-height:1;
+}
+
+
+/* =========================================================
+   5 SECOND FINAL TIMER
+========================================================= */
+
+.team-timer.final-timer{
+
+    color:#ff9f1a;
+
+    border-color:#ff9f1a;
+
+    box-shadow:
+        0 0 10px #ff9f1a;
+
+    animation:timerPulse .5s infinite alternate;
+}
+
+
+@keyframes timerPulse{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.08);
+    }
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+
+    width:100%;
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding-top:100px;
+
+    padding-bottom:190px;
+}
+
+
+/* =========================================================
+   CHOICES
+========================================================= */
+
+.choices{
+
+    width:min(900px,75%);
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+}
+
+
+.choice{
+
+    min-height:75px;
+
+    padding:12px 18px;
+
+    border-radius:14px;
+
+    background:#292929;
+
+    border:3px solid #555;
+
+    display:flex;
+
+    align-items:center;
+
+    text-align:left;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:scale(.85);
+
+    transition:
+
+        opacity .3s ease,
+
+        transform .3s ease,
+
+        background .25s ease,
+
+        border-color .25s ease;
+}
+
+
+.choice.visible{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:scale(1);
+}
+
+
+.choice.correct{
+
+    background:#20a35a !important;
+
+    border-color:#20a35a !important;
+
+    color:white;
+}
+
+
+.choice.wrong{
+
+    background:#e74c3c !important;
+
+    border-color:#e74c3c !important;
+
+    color:white;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1200px){
+
+    .score-left,
+    .score-right{
+
+        width:190px;
+
+        padding:14px;
+    }
+
+
+    .score-name{
+        font-size:20px;
+    }
+
+
+    .score-number{
+        font-size:50px;
+    }
+
+
+    .question-box{
+
+        width:50%;
+
+        min-height:85px;
+
+        padding:12px 18px;
+    }
+
+
+    #questionText{
+        font-size:24px;
+    }
+
+
+    .center-team{
+
+        width:340px;
+
+        min-height:150px;
+
+        bottom:15px;
+    }
+
+
+    .main{
+
+        padding-top:95px;
+
+        padding-bottom:175px;
+    }
+
+
+    .choices{
+
+        width:75%;
+
+        gap:10px;
+    }
+
+
+    .choice{
+
+        min-height:70px;
+
+        padding:10px 15px;
+
+        font-size:19px;
+    }
+
+}
+
+
+@media(max-width:900px){
+
+    .screen{
+        padding:10px;
+    }
+
+
+    .score-left,
+    .score-right{
+
+        width:170px;
+
+        padding:12px;
+
+        top:15px;
+    }
+
+
+    .score-left{
+        left:15px;
+    }
+
+
+    .score-right{
+        right:15px;
+    }
+
+
+    .score-name{
+        font-size:18px;
+    }
+
+
+    .score-number{
+        font-size:45px;
+    }
+
+
+    .question-box{
+
+        top:15px;
+
+        width:48%;
+
+        min-height:75px;
+
+        padding:10px 14px;
+    }
+
+
+    #questionText{
+        font-size:20px;
+    }
+
+
+    .center-team{
+
+        bottom:12px;
+
+        width:300px;
+
+        min-height:140px;
+
+        padding:10px 18px;
+    }
+
+
+    .center-team-name{
+        font-size:28px;
+    }
+
+
+    .team-buzz-label{
+        font-size:17px;
+    }
+
+
+    .center-team-status{
+        font-size:19px;
+    }
+
+
+    .team-timer{
+
+        width:70px;
+
+        font-size:30px;
+
+        margin-top:6px;
+    }
+
+
+    .main{
+
+        padding-top:90px;
+
+        padding-bottom:155px;
+    }
+
+
+    .choices{
+
+        width:88%;
+
+        gap:10px;
+    }
+
+
+    .choice{
+
+        min-height:65px;
+
+        padding:9px 13px;
+
+        font-size:18px;
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    .score-left,
+    .score-right{
+
+        width:125px;
+
+        padding:8px;
+
+        border-width:3px;
+    }
+
+
+    .score-left{
+        left:8px;
+    }
+
+
+    .score-right{
+        right:8px;
+    }
+
+
+    .score-name{
+        font-size:13px;
+    }
+
+
+    .score-number{
+
+        font-size:35px;
+
+        margin-top:4px;
+    }
+
+
+    .question-box{
+
+        top:10px;
+
+        width:42%;
+
+        min-height:60px;
+
+        border-width:3px;
+
+        padding:7px;
+    }
+
+
+    #questionText{
+        font-size:14px;
+    }
+
+
+    .center-team{
+
+        bottom:8px;
+
+        width:225px;
+
+        min-height:115px;
+
+        padding:7px 12px;
+
+        border-width:4px;
+    }
+
+
+    .center-team-name{
+        font-size:21px;
+    }
+
+
+    .team-buzz-label{
+
+        font-size:13px;
+
+        letter-spacing:1px;
+    }
+
+
+    .center-team-status{
+        font-size:15px;
+    }
+
+
+    .team-timer{
+
+        width:60px;
+
+        margin-top:5px;
+
+        padding:4px;
+
+        font-size:26px;
+
+        border-width:2px;
+    }
+
+
+    .main{
+
+        padding-top:80px;
+
+        padding-bottom:125px;
+    }
+
+
+    .choices{
+
+        width:94%;
+
+        gap:8px;
+    }
+
+
+    .choice{
+
+        min-height:58px;
+
+        padding:8px 10px;
+
+        font-size:15px;
+
+        border-width:2px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="screen">
+
+
+<!-- =========================================================
+     TEAM 1 SCORE
+========================================================= -->
+
+<div class="score-left">
+
+    <div class="score-name">
+        🔵 TEAM 1 SCORE
+    </div>
+
+    <div id="score1"
+         class="score-number">
+        0
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TEAM 2 SCORE
+========================================================= -->
+
+<div class="score-right">
+
+    <div class="score-name">
+        🔴 TEAM 2 SCORE
+    </div>
+
+    <div id="score2"
+         class="score-number">
+        0
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     QUESTION
+========================================================= -->
+
+<div id="questionBox"
+     class="question-box">
+
+    <div id="questionText">
+        Waiting for question...
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TEAM 1 BUZZ
+========================================================= -->
+
+<div id="centerTeam1"
+     class="center-team team1">
+
+    <div class="center-team-name">
+        🔵 Player 1
+    </div>
+
+    <div class="team-buzz-label">
+        Choose Your Answer
+    </div>
+
+    <div id="centerStatus1"
+         class="center-team-status">
+        BUZZED FIRST!
+    </div>
+
+    <div id="timer1"
+         class="team-timer">
+        10
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TEAM 2 BUZZ
+========================================================= -->
+
+<div id="centerTeam2"
+     class="center-team team2">
+
+    <div class="center-team-name">
+        🔴 Player 2
+    </div>
+
+    <div class="team-buzz-label">
+        Choose Your Answer
+    </div>
+
+    <div id="centerStatus2"
+         class="center-team-status">
+        BUZZED FIRST!
+    </div>
+
+    <div id="timer2"
+         class="team-timer">
+        10
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CHOICES
+========================================================= -->
+
+<div class="main">
+
+    <div id="choices"
+         class="choices">
+
+        <div id="choice0"
+             class="choice">
+        </div>
+
+        <div id="choice1"
+             class="choice">
+        </div>
+
+        <div id="choice2"
+             class="choice">
+        </div>
+
+        <div id="choice3"
+             class="choice">
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CHANNEL
+========================================================= */
+
+const screenChannel =
+    new BroadcastChannel(
+        "team-quiz-screen"
+    );
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const score1 =
+    document.getElementById("score1");
+
+const score2 =
+    document.getElementById("score2");
+
+const questionBox =
+    document.getElementById("questionBox");
+
+const questionText =
+    document.getElementById("questionText");
+
+const centerTeam1 =
+    document.getElementById("centerTeam1");
+
+const centerTeam2 =
+    document.getElementById("centerTeam2");
+
+const centerStatus1 =
+    document.getElementById("centerStatus1");
+
+const centerStatus2 =
+    document.getElementById("centerStatus2");
+
+const timer1 =
+    document.getElementById("timer1");
+
+const timer2 =
+    document.getElementById("timer2");
+
+
+const choiceElements = [
+
+    document.getElementById("choice0"),
+
+    document.getElementById("choice1"),
+
+    document.getElementById("choice2"),
+
+    document.getElementById("choice3")
+
+];
+
+
+const letters = [
+    "A",
+    "B",
+    "C",
+    "D"
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let typingTimer = null;
+
+let choicesTimer = null;
+
+let currentQuestionText = "";
+
+let typingFinished = false;
+
+let lastQuestion = null;
+
+let lastRevealedChoices = 0;
+
+let lastSelectedAnswer = -1;
+
+let lastAnswerResult = "";
+
+
+/*
+   5 SECOND FINAL TIMER STATE
+*/
+
+let finalTimerRunning = false;
+
+let finalTimerValue = 5;
+
+let finalTimerInterval = null;
+
+let finalTimerTeam = 0;
+
+
+/* =========================================================
+   HIDE CHOICES
+========================================================= */
+
+function hideChoices(){
+
+    choiceElements.forEach(
+        element => {
+
+            element.className =
+                "choice";
+
+            element.innerText =
+                "";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   GET QUESTION TEXT
+========================================================= */
+
+function getQuestionText(question){
+
+    if(!question){
+
+        return "";
+
+    }
+
+
+    if(
+        typeof question === "object"
+    ){
+
+        return question.question || "";
+
+    }
+
+
+    return question;
+
+}
+
+
+/* =========================================================
+   SHOW CHOICES
+========================================================= */
+
+function showChoices(){
+
+    if(!lastQuestion)
+        return;
+
+
+    if(
+        !Array.isArray(
+            lastQuestion.choices
+        )
+    ){
+
+        return;
+
+    }
+
+
+    updateChoices(
+
+        lastQuestion,
+
+        lastRevealedChoices,
+
+        lastSelectedAnswer,
+
+        lastAnswerResult
+
+    );
+
+}
+
+
+/* =========================================================
+   QUESTION TYPING
+========================================================= */
+
+function updateQuestion(question){
+
+    const newText =
+        getQuestionText(
+            question
+        );
+
+
+    if(
+        newText ===
+        currentQuestionText
+    ){
+
+        return;
+
+    }
+
+
+    /*
+       New question means
+       reset final timer.
+    */
+
+    stopFinalTimer();
+
+
+    currentQuestionText =
+        newText;
+
+
+    typingFinished =
+        false;
+
+
+    if(typingTimer){
+
+        clearInterval(
+            typingTimer
+        );
+
+        typingTimer =
+            null;
+
+    }
+
+
+    if(choicesTimer){
+
+        clearTimeout(
+            choicesTimer
+        );
+
+        choicesTimer =
+            null;
+
+    }
+
+
+    hideChoices();
+
+
+    questionText.innerText =
+        "";
+
+    questionText.classList.add(
+        "typing"
+    );
+
+
+    questionBox.classList.add(
+        "active"
+    );
+
+
+    if(!newText){
+
+        questionText.innerText =
+            "Waiting for question...";
+
+        questionText.classList.remove(
+            "typing"
+        );
+
+        typingFinished =
+            true;
+
+        return;
+
+    }
+
+
+    let position = 0;
+
+
+    typingTimer =
+        setInterval(
+
+            function(){
+
+                questionText.innerText =
+                    newText.substring(
+                        0,
+                        position
+                    );
+
+
+                position++;
+
+
+                if(
+                    position >
+                    newText.length
+                ){
+
+                    clearInterval(
+                        typingTimer
+                    );
+
+                    typingTimer =
+                        null;
+
+
+                    typingFinished =
+                        true;
+
+
+                    questionText.classList.remove(
+                        "typing"
+                    );
+
+
+                    choicesTimer =
+                        setTimeout(
+
+                            function(){
+
+                                if(
+                                    currentQuestionText ===
+                                    newText
+                                ){
+
+                                    showChoices();
+
+                                }
+
+                            },
+
+                            500
+
+                        );
+
+                }
+
+            },
+
+            50
+
+        );
+
+}
+
+
+/* =========================================================
+   UPDATE CHOICES
+========================================================= */
+
+function updateChoices(
+
+    question,
+    revealedChoices,
+    selectedAnswer,
+    answerResult
+
+){
+
+    if(!question){
+
+        hideChoices();
+
+        return;
+
+    }
+
+
+    if(
+        !Array.isArray(
+            question.choices
+        )
+    ){
+
+        hideChoices();
+
+        return;
+
+    }
+
+
+    question.choices.forEach(
+
+        (choice,index) => {
+
+            const element =
+                choiceElements[index];
+
+
+            if(!element)
+                return;
+
+
+            element.innerText =
+                letters[index] +
+                ". " +
+                choice;
+
+
+            element.className =
+                "choice";
+
+
+            if(
+
+                typingFinished &&
+
+                index <
+                revealedChoices
+
+            ){
+
+                element.classList.add(
+                    "visible"
+                );
+
+            }
+
+
+            if(
+
+                answerResult ===
+                "correct" &&
+
+                selectedAnswer ===
+                index
+
+            ){
+
+                element.classList.add(
+                    "correct"
+                );
+
+            }
+
+
+            if(
+
+                answerResult ===
+                "wrong" &&
+
+                selectedAnswer ===
+                index
+
+            ){
+
+                element.classList.add(
+                    "wrong"
+                );
+
+            }
+
+        }
+
+    );
+
+
+    for(
+
+        let i =
+            question.choices.length;
+
+        i <
+            choiceElements.length;
+
+        i++
+
+    ){
+
+        choiceElements[i].className =
+            "choice";
+
+        choiceElements[i].innerText =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   START 5 SECOND TIMER
+========================================================= */
+
+function startFinalTimer(team){
+
+    /*
+       Huwag mag-start ulit kung
+       tumatakbo na.
+    */
+
+    if(finalTimerRunning)
+        return;
+
+
+    if(
+        team !== 1 &&
+        team !== 2 &&
+        team !== 3 &&
+        team !== 4
+    ){
+
+        return;
+
+    }
+
+
+    finalTimerRunning = true;
+
+    finalTimerValue = 5;
+
+    finalTimerTeam = team;
+
+
+    /*
+       Show immediately
+    */
+
+    showFinalTimer();
+
+
+    /*
+       Countdown every second
+    */
+
+    finalTimerInterval =
+        setInterval(
+
+            function(){
+
+                finalTimerValue--;
+
+
+                if(
+                    finalTimerValue <= 0
+                ){
+
+                    stopFinalTimer();
+
+                    return;
+
+                }
+
+
+                showFinalTimer();
+
+            },
+
+            1000
+
+        );
+
+}
+
+
+/* =========================================================
+   SHOW FINAL TIMER
+========================================================= */
+
+function showFinalTimer(){
+
+    if(!finalTimerRunning)
+        return;
+
+
+    const timerElement =
+
+        (
+            finalTimerTeam === 1 ||
+            finalTimerTeam === 4
+        )
+
+            ? timer1
+
+            : timer2;
+
+
+    const otherElement =
+
+        (
+            timerElement === timer1
+        )
+
+            ? timer2
+
+            : timer1;
+
+
+    otherElement.style.display =
+        "none";
+
+
+    timerElement.innerText =
+        finalTimerValue;
+
+
+    timerElement.classList.add(
+        "final-timer"
+    );
+
+
+    timerElement.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   STOP FINAL TIMER
+========================================================= */
+
+function stopFinalTimer(){
+
+    finalTimerRunning = false;
+
+    finalTimerValue = 5;
+
+    finalTimerTeam = 0;
+
+
+    if(finalTimerInterval){
+
+        clearInterval(
+            finalTimerInterval
+        );
+
+        finalTimerInterval =
+            null;
+
+    }
+
+
+    timer1.style.display =
+        "none";
+
+    timer2.style.display =
+        "none";
+
+
+    timer1.classList.remove(
+        "final-timer"
+    );
+
+    timer2.classList.remove(
+        "final-timer"
+    );
+
+}
+
+
+/* =========================================================
+   NORMAL TIMER
+========================================================= */
+
+function updateTimer(
+
+    seconds,
+    mode,
+    currentTeam
+
+){
+
+    /*
+       Kapag final timer na,
+       huwag patungan ng normal timer.
+    */
+
+    if(finalTimerRunning){
+
+        return;
+
+    }
+
+
+    timer1.style.display =
+        "none";
+
+    timer2.style.display =
+        "none";
+
+
+    if(
+
+        !mode ||
+
+        seconds <= 0
+
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        mode === "buzz"
+    ){
+
+        timer1.style.color =
+            "#f1c40f";
+
+        timer1.style.borderColor =
+            "#f1c40f";
+
+
+        timer2.style.color =
+            "#f1c40f";
+
+        timer2.style.borderColor =
+            "#f1c40f";
+
+    }
+
+    else{
+
+        timer1.style.color =
+            "#e67e22";
+
+        timer1.style.borderColor =
+            "#e67e22";
+
+
+        timer2.style.color =
+            "#e67e22";
+
+        timer2.style.borderColor =
+            "#e67e22";
+
+    }
+
+
+    if(
+
+        currentTeam === 1 ||
+        currentTeam === 4
+
+    ){
+
+        timer1.innerText =
+            seconds;
+
+        timer1.style.display =
+            "block";
+
+    }
+
+
+    else if(
+
+        currentTeam === 2 ||
+        currentTeam === 3
+
+    ){
+
+        timer2.innerText =
+            seconds;
+
+        timer2.style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =========================================================
+   CENTER TEAM
+========================================================= */
+
+function updateCenterTeam(
+
+    currentTeam,
+    answered
+
+){
+
+    centerTeam1.classList.remove(
+        "blink"
+    );
+
+    centerTeam2.classList.remove(
+        "blink"
+    );
+
+
+    /*
+       Kapag nasagot na talaga,
+       stop final timer.
+    */
+
+    if(answered){
+
+        stopFinalTimer();
+
+        return;
+
+    }
+
+
+    /*
+       TEAM 1
+    */
+
+    if(
+
+        currentTeam === 1 ||
+        currentTeam === 4
+
+    ){
+
+        centerTeam1.classList.add(
+            "blink"
+        );
+
+
+        centerStatus1.innerText =
+
+            currentTeam === 4
+
+                ? "STEAL!"
+
+                : "BUZZED FIRST!";
+
+    }
+
+
+    /*
+       TEAM 2
+    */
+
+    else if(
+
+        currentTeam === 2 ||
+        currentTeam === 3
+
+    ){
+
+        centerTeam2.classList.add(
+            "blink"
+        );
+
+
+        centerStatus2.innerText =
+
+            currentTeam === 3
+
+                ? "STEAL!"
+
+                : "BUZZED FIRST!";
+
+    }
+
+}
+
+
+/* =========================================================
+   RECEIVE STATE
+========================================================= */
+
+screenChannel.onmessage =
+function(event){
+
+    const data =
+        event.data;
+
+
+    if(!data)
+        return;
+
+
+    if(
+        data.type !==
+        "STATE"
+    ){
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       SCORE
+    ===================================================== */
+
+    score1.innerText =
+        data.scoreTeam1 ?? 0;
+
+
+    score2.innerText =
+        data.scoreTeam2 ?? 0;
+
+
+    /* =====================================================
+       QUESTION
+    ===================================================== */
+
+    const incomingText =
+        getQuestionText(
+            data.question
+        );
+
+
+    if(
+
+        incomingText !==
+        currentQuestionText
+
+    ){
+
+        lastQuestion =
+            data.question || null;
+
+
+        lastRevealedChoices =
+            data.revealedChoices || 0;
+
+
+        lastSelectedAnswer =
+
+            typeof data.selectedAnswer ===
+            "number"
+
+                ? data.selectedAnswer
+
+                : -1;
+
+
+        lastAnswerResult =
+            data.answerResult || "";
+
+
+        updateQuestion(
+            data.question
+        );
+
+    }
+
+    else{
+
+        lastQuestion =
+            data.question ||
+            lastQuestion;
+
+
+        lastRevealedChoices =
+            data.revealedChoices || 0;
+
+
+        lastSelectedAnswer =
+
+            typeof data.selectedAnswer ===
+            "number"
+
+                ? data.selectedAnswer
+
+                : -1;
+
+
+        lastAnswerResult =
+            data.answerResult || "";
+
+
+        if(
+            typingFinished
+        ){
+
+            showChoices();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TEAM BUZZ
+    ===================================================== */
+
+    updateCenterTeam(
+
+        data.currentTeam,
+
+        data.answered
+
+    );
+
+
+    /* =====================================================
+       FINAL 5 SECOND TIMER
+       
+       IMPORTANT:
+       Kapag 4 choices na ang revealed
+       at may active team, ang susunod/final
+       state ay bibigyan ng 5 seconds.
+
+       Hindi ito nire-restart bawat STATE.
+    ===================================================== */
+
+    const activeTeam =
+        data.currentTeam;
+
+
+    const hasActiveTeam =
+
+        activeTeam === 1 ||
+        activeTeam === 2 ||
+        activeTeam === 3 ||
+        activeTeam === 4;
+
+
+    /*
+       Final state:
+       lahat ng 4 choices ay revealed.
+
+       Kapag may active team at hindi pa
+       answered, start 5 seconds.
+    */
+
+    if(
+
+        data.revealedChoices >= 4 &&
+
+        hasActiveTeam &&
+
+        !data.answered &&
+
+        !finalTimerRunning
+
+    ){
+
+        startFinalTimer(
+            activeTeam
+        );
+
+    }
+
+
+    /* =====================================================
+       NORMAL TIMER
+    ===================================================== */
+
+    updateTimer(
+
+        data.timerSeconds || 0,
+
+        data.timerMode || "",
+
+        data.currentTeam
+
+    );
+
+};
+
+
+/* =========================================================
+   REQUEST CURRENT STATE
+========================================================= */
+
+screenChannel.postMessage({
+
+    type:
+        "REQUEST_STATE"
+
+});
+
+</script>
+
+</body>
+
+</html>
