@@ -633,11 +633,14 @@ const bgm1Variants = [
 
 const bgm2 = new Audio("audio/bgm2.mp3");
 
-const correctSound = new Audio("audio/Fact.mp3");
+const correctSound =
+    new Audio("audio/Fact.mp3");
 
-const wrongSound = new Audio("audio/mali.mp3");
+const wrongSound =
+    new Audio("audio/mali.mp3");
 
-const timerSound = new Audio("audio/timer.mp3");
+const timerSound =
+    new Audio("audio/timer.mp3");
 
 bgm.loop = true;
 bgm.volume = .5;
@@ -659,10 +662,18 @@ let autoNextAfterBgm1 = false;
 async function playAudio(a){
 
     try{
+
         await a.play();
+
         return true;
+
     }catch(e){
-        console.log("Audio blocked:",e);
+
+        console.log(
+            "Audio blocked:",
+            e
+        );
+
         return false;
     }
 
@@ -734,42 +745,46 @@ function fadeOutBgm1(callback){
     const steps = 30;
     let n = 0;
 
-    bgm1FadeInterval = setInterval(()=>{
+    bgm1FadeInterval =
+        setInterval(()=>{
 
-        n++;
+            n++;
 
-        a.volume =
-            Math.max(
-                0,
-                start * (1-n/steps)
-            );
+            a.volume =
+                Math.max(
+                    0,
+                    start *
+                    (1-n/steps)
+                );
 
-        if(n>=steps){
+            if(n>=steps){
 
-            clearInterval(
-                bgm1FadeInterval
-            );
+                clearInterval(
+                    bgm1FadeInterval
+                );
 
-            bgm1FadeInterval = null;
+                bgm1FadeInterval = null;
 
-            a.pause();
-            a.currentTime = 0;
-            a.volume = .5;
-            a.onended = null;
+                a.pause();
+                a.currentTime = 0;
+                a.volume = .5;
+                a.onended = null;
 
-            if(currentBgm1===a){
-                currentBgm1 = null;
+                if(currentBgm1===a){
+
+                    currentBgm1 = null;
+
+                }
+
+                bgm1Fading = false;
+
+                if(callback){
+                    callback();
+                }
+
             }
 
-            bgm1Fading = false;
-
-            if(callback){
-                callback();
-            }
-
-        }
-
-    },50);
+        },50);
 
 }
 
@@ -786,7 +801,9 @@ async function startQuizBGM(){
 
     }
 
-    bgm1Variants.forEach(resetBgm1);
+    bgm1Variants.forEach(
+        resetBgm1
+    );
 
     await playAudio(bgm2);
 
@@ -797,7 +814,10 @@ async function playCorrectBGM(){
     stopAudio(bgm2);
     stopAudio(bgm);
 
-    bgm1Variants.forEach(resetBgm1);
+    bgm1Variants.forEach(
+        resetBgm1
+    );
+
     clearBgm1Fade();
 
     const a =
@@ -968,6 +988,11 @@ const timerElement =
         "timer"
     );
 
+const nextQuestionBtn =
+    document.getElementById(
+        "nextQuestionBtn"
+    );
+
 
 /* =========================================================
    FIREBASE CONFIG
@@ -1068,10 +1093,6 @@ async function claimHostLock(){
             await hostLockRef.transaction(
                 current=>{
 
-                    /*
-                     * WALANG HOST
-                     */
-
                     if(current === null){
 
                         return {
@@ -1087,10 +1108,6 @@ async function claimHostLock(){
 
                     }
 
-                    /*
-                     * SARILI NATING HOST
-                     */
-
                     if(
                         current &&
                         current.hostId === hostId
@@ -1099,10 +1116,6 @@ async function claimHostLock(){
                         return current;
 
                     }
-
-                    /*
-                     * MAY IBANG HOST
-                     */
 
                     return;
 
@@ -1137,20 +1150,9 @@ async function claimHostLock(){
 
         hostLockActive = true;
 
-        /*
-         * Automatic release kapag
-         * nawala ang browser/connection.
-         */
-
         await hostLockRef
             .onDisconnect()
             .remove();
-
-        /*
-         * IMPORTANT:
-         * Gagawa ng room data kahit
-         * wala pang existing room.
-         */
 
         await roomRef.update({
 
@@ -1347,16 +1349,12 @@ firebaseConnectionRef.on(
             );
 
             return;
+
         }
 
         console.log(
             "Firebase: ONLINE"
         );
-
-        /*
-         * Kapag may active host lock,
-         * connection status remains connected.
-         */
 
         if(
             hostLockActive &&
@@ -1434,13 +1432,8 @@ connectBtn.onclick = async ()=>{
         );
 
         return;
+
     }
-
-
-    /*
-     * Kapag ibang room,
-     * release ang dating lock.
-     */
 
     if(
         hostLockActive &&
@@ -1453,7 +1446,6 @@ connectBtn.onclick = async ()=>{
 
     }
 
-
     roomNumber = value;
 
     saveRoomNumber();
@@ -1464,27 +1456,12 @@ connectBtn.onclick = async ()=>{
             roomNumber
         );
 
-
     showRoomChecking();
-
 
     try{
 
-        /*
-         * HINDI NA NAG-CHECK NG
-         * roomRef.once("value")
-         *
-         * Kahit walang existing room,
-         * pwede na itong kunin.
-         */
-
         const lockResult =
             await claimHostLock();
-
-
-        /*
-         * MAY IBANG HOST
-         */
 
         if(
             !lockResult.success
@@ -1503,17 +1480,12 @@ connectBtn.onclick = async ()=>{
             );
 
             return;
+
         }
-
-
-        /*
-         * SUCCESS
-         */
 
         firebaseConnected = true;
 
         hideRoomWarning();
-
 
         connectionStatus.innerText =
             "Firebase: Connected • Room " +
@@ -1523,14 +1495,8 @@ connectBtn.onclick = async ()=>{
             "connected"
         );
 
-
         connectBtn.innerText =
             "✓ ROOM CONNECTED";
-
-
-        /*
-         * LISTENERS
-         */
 
         stopRoomListeners();
 
@@ -1541,11 +1507,6 @@ connectBtn.onclick = async ()=>{
         lastRemoteTimestamp = 0;
 
         listenRemoteButtons();
-
-
-        /*
-         * LAST REMOTE TIMESTAMP
-         */
 
         roomRef
             .child("remoteButton")
@@ -1570,11 +1531,6 @@ connectBtn.onclick = async ()=>{
             })
             .catch(console.error);
 
-
-        /*
-         * ROOM STATE
-         */
-
         await roomRef.update({
 
             roomNumber:
@@ -1587,23 +1543,10 @@ connectBtn.onclick = async ()=>{
 
         });
 
-
-        /*
-         * PUBLISH CURRENT STATE
-         */
-
         publishQuizState(
             "WAITING",
             null
         );
-
-
-        /*
-         * ROOM MONITOR
-         *
-         * Hindi na room existence ang basis.
-         * hostLock ang tinitingnan.
-         */
 
         if(roomAvailabilityListener){
 
@@ -1614,17 +1557,11 @@ connectBtn.onclick = async ()=>{
 
         }
 
-
         roomAvailabilityListener =
             snap=>{
 
                 const data =
                     snap.val();
-
-
-                /*
-                 * Room completely removed.
-                 */
 
                 if(!data){
 
@@ -1642,14 +1579,8 @@ connectBtn.onclick = async ()=>{
                     return;
                 }
 
-
                 const lock =
                     data.hostLock;
-
-
-                /*
-                 * SARILI NATIN
-                 */
 
                 if(
                     lock &&
@@ -1671,11 +1602,6 @@ connectBtn.onclick = async ()=>{
                     return;
                 }
 
-
-                /*
-                 * IBANG HOST
-                 */
-
                 if(lock){
 
                     firebaseConnected = false;
@@ -1684,11 +1610,6 @@ connectBtn.onclick = async ()=>{
 
                     return;
                 }
-
-
-                /*
-                 * WALANG HOST
-                 */
 
                 firebaseConnected = false;
 
@@ -1704,12 +1625,10 @@ connectBtn.onclick = async ()=>{
 
             };
 
-
         roomRef.on(
             "value",
             roomAvailabilityListener
         );
-
 
         console.log(
             "ROOM CONNECTED:",
@@ -1720,7 +1639,6 @@ connectBtn.onclick = async ()=>{
             "HOST ID:",
             hostId
         );
-
 
     }catch(error){
 
@@ -1760,7 +1678,6 @@ function listenFirebase(){
 
     if(!roomRef)return;
 
-
     roomRef
         .child("buzzer")
         .off("value");
@@ -1768,7 +1685,6 @@ function listenFirebase(){
     roomRef
         .child("answer")
         .off("value");
-
 
     roomRef
         .child("buzzer")
@@ -1799,7 +1715,6 @@ function listenFirebase(){
             }
         );
 
-
     roomRef
         .child("answer")
         .on(
@@ -1820,7 +1735,6 @@ function listenFirebase(){
 
                 }
 
-
                 const idx = {
 
                     A:0,
@@ -1834,9 +1748,7 @@ function listenFirebase(){
                     ).toUpperCase()
                 ];
 
-
                 if(idx === undefined)return;
-
 
                 const buttons =
                     document.querySelectorAll(
@@ -1848,12 +1760,10 @@ function listenFirebase(){
 
                 if(!button)return;
 
-
                 const p =
                     String(
                         d.player || ""
                     ).toLowerCase();
-
 
                 if(
                     p !== "player1" &&
@@ -1862,7 +1772,6 @@ function listenFirebase(){
 
                     return;
                 }
-
 
                 if(
                     !button.classList.contains(
@@ -1878,9 +1787,7 @@ function listenFirebase(){
 
                 }
 
-
                 if(button.disabled)return;
-
 
                 selectAnswer(
                     idx,
@@ -1910,7 +1817,6 @@ function listenRemoteButtons(){
 
     remoteListenerStarted = true;
 
-
     roomRef
         .child("remoteButton")
         .on(
@@ -1922,12 +1828,10 @@ function listenRemoteButtons(){
 
                 if(!d)return;
 
-
                 const timestamp =
                     Number(
                         d.timestamp || 0
                     );
-
 
                 if(
                     timestamp <=
@@ -1937,10 +1841,8 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 lastRemoteTimestamp =
                     timestamp;
-
 
                 if(
                     d.round &&
@@ -1951,12 +1853,10 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 const command =
                     String(
                         d.command || ""
                     ).toUpperCase();
-
 
                 if(command==="TEAM1"){
 
@@ -1974,7 +1874,6 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 if(command==="TEAM2"){
 
                     if(
@@ -1991,7 +1890,6 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 const idx = {
 
                     A:0,
@@ -2001,15 +1899,12 @@ function listenRemoteButtons(){
 
                 }[command];
 
-
                 if(idx===undefined)return;
-
 
                 const player =
                     String(
                         d.player || ""
                     ).toLowerCase();
-
 
                 if(
                     player!=="player1" &&
@@ -2018,7 +1913,6 @@ function listenRemoteButtons(){
 
                     return;
                 }
-
 
                 if(
                     player==="player1" &&
@@ -2034,7 +1928,6 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 if(
                     player==="player2" &&
                     (
@@ -2049,19 +1942,15 @@ function listenRemoteButtons(){
                     return;
                 }
 
-
                 const buttons =
                     document.querySelectorAll(
                         ".choice"
                     );
 
-
                 const button =
                     buttons[idx];
 
-
                 if(!button)return;
-
 
                 if(
                     !button.classList.contains(
@@ -2077,9 +1966,7 @@ function listenRemoteButtons(){
 
                 }
 
-
                 if(button.disabled)return;
-
 
                 selectAnswer(
                     idx,
@@ -2110,7 +1997,6 @@ function publishQuizState(
         return;
     }
 
-
     roomRef
         .child("state")
         .set({
@@ -2134,14 +2020,17 @@ function publishQuizState(
                     currentTeam===1 ||
                     currentTeam===4
                 )
-                ? "player1"
+                ?
+                "player1"
                 :
                 (
                     currentTeam===2 ||
                     currentTeam===3
                 )
-                ? "player2"
-                : null,
+                ?
+                "player2"
+                :
+                null,
 
             correct:
                 answerResult==="correct",
@@ -2172,7 +2061,6 @@ function publishRoundStart(){
 
         return;
     }
-
 
     roomRef.update({
 
@@ -2223,7 +2111,8 @@ function sendScreenState(){
         type:"STATE",
 
         question:
-            questions[currentQuestion] || null,
+            questions[currentQuestion] ||
+            null,
 
         currentQuestion,
 
@@ -2267,7 +2156,6 @@ document.getElementById(
             "width=1280,height=720,resizable=yes"
         );
 
-
     if(!w){
 
         alert(
@@ -2276,7 +2164,6 @@ document.getElementById(
 
         return;
     }
-
 
     setTimeout(
         sendScreenState,
@@ -2306,8 +2193,19 @@ screenChannel.onmessage=e=>{
 
 function revealNextChoice(){
 
-    if(answered)return;
+    /*
+     * HINDI PUWEDE MAG-REVEAL
+     * KAPAG MAY BUZZ O ANSWER TIMER
+     */
+    if(
+        answered ||
+        timerMode==="buzz" ||
+        timerMode==="answer" ||
+        currentTeam!==0
+    ){
 
+        return;
+    }
 
     if(revealedChoices<4){
 
@@ -2318,12 +2216,10 @@ function revealNextChoice(){
                 ".choice"
             );
 
-
         const b =
             buttons[
                 revealedChoices-1
             ];
-
 
         if(b){
 
@@ -2333,7 +2229,6 @@ function revealNextChoice(){
 
         }
 
-
         publishQuizState(
             "WAITING",
             null
@@ -2341,25 +2236,26 @@ function revealNextChoice(){
 
         sendScreenState();
 
+        /*
+         * Kapag 4 choices na,
+         * automatic start ng BUZZ countdown.
+         */
+        if(revealedChoices===4){
+
+            startBuzzTimer();
+
+        }
+
         return;
-    }
-
-
-    if(revealedChoices===4){
-
-        startBuzzTimer();
-
-        publishQuizState(
-            "READY",
-            null
-        );
-
-        sendScreenState();
 
     }
 
 }
 
+
+/* =========================================================
+   ENTER KEY CONTROL
+========================================================= */
 
 document.addEventListener(
     "keydown",
@@ -2373,10 +2269,55 @@ document.addEventListener(
             return;
         }
 
+        if(e.key!=="Enter"){
 
-        if(e.key==="Enter"){
+            return;
+        }
 
-            e.preventDefault();
+        e.preventDefault();
+
+        /*
+         * BUZZ COUNTDOWN
+         * ENTER LOCKED
+         */
+        if(timerMode==="buzz"){
+
+            return;
+        }
+
+        /*
+         * ANSWER COUNTDOWN
+         * ENTER LOCKED
+         */
+        if(timerMode==="answer"){
+
+            return;
+        }
+
+        /*
+         * 
+         * ENTER = NEXT QUESTION
+         */
+        if(answered){
+
+            if(bgm1Fading){
+
+                return;
+            }
+
+            nextQuestionBtn.click();
+
+            return;
+        }
+
+        /*
+         * WAITING
+         * ENTER = REVEAL NEXT CHOICE
+         */
+        if(
+            currentTeam===0 &&
+            revealedChoices<4
+        ){
 
             revealNextChoice();
 
@@ -2392,6 +2333,12 @@ document.addEventListener(
 
 function teamBuzz(team){
 
+    /*
+     * IMPORTANT:
+     * Kapag may timer na tumatakbo,
+     * Enter ay hindi makakaapekto rito.
+     */
+
     if(
         answered ||
         revealedChoices<1
@@ -2400,13 +2347,15 @@ function teamBuzz(team){
         return;
     }
 
-
     if(currentTeam===0){
 
-        currentTeam = team;
+        currentTeam=team;
 
+        /*
+         * STOP BUZZ COUNTDOWN
+         * Hindi na ito babalik sa 10.
+         */
         stopBuzzTimer();
-
 
         publishQuizState(
             "BUZZ",
@@ -2414,7 +2363,6 @@ function teamBuzz(team){
             ? "player1"
             : "player2"
         );
-
 
         if(team===1){
 
@@ -2426,12 +2374,10 @@ function teamBuzz(team){
                 "hidden-team"
             );
 
-
             buzz1.innerText =
                 "🔵 TEAM 1 BUZZED!";
 
-            buzz2.innerText = "";
-
+            buzz2.innerText="";
 
         }else{
 
@@ -2443,14 +2389,12 @@ function teamBuzz(team){
                 "hidden-team"
             );
 
-
             buzz2.innerText =
                 "🔴 TEAM 2 BUZZED!";
 
-            buzz1.innerText = "";
+            buzz1.innerText="";
 
         }
-
 
         startAnswerAfterBuzz();
 
@@ -2460,6 +2404,9 @@ function teamBuzz(team){
     }
 
 
+    /*
+     * TEAM 2 STEAL
+     */
     if(
         currentTeam===3 &&
         team===2
@@ -2479,16 +2426,13 @@ function teamBuzz(team){
             "buzzer-winner"
         );
 
-
         buzz2.innerText =
             "🔴 TEAM 2 STEAL!";
-
 
         publishQuizState(
             "STEAL",
             "player2"
         );
-
 
         startAnswerAfterBuzz();
 
@@ -2498,6 +2442,9 @@ function teamBuzz(team){
     }
 
 
+    /*
+     * TEAM 1 STEAL
+     */
     if(
         currentTeam===4 &&
         team===1
@@ -2517,16 +2464,13 @@ function teamBuzz(team){
             "buzzer-winner"
         );
 
-
         buzz1.innerText =
             "🔵 TEAM 1 STEAL!";
-
 
         publishQuizState(
             "STEAL",
             "player1"
         );
-
 
         startAnswerAfterBuzz();
 
@@ -2545,7 +2489,6 @@ function startAnswerAfterBuzz(){
 
     stopTimers();
 
-
     document
         .querySelectorAll(".choice")
         .forEach(b=>{
@@ -2562,21 +2505,23 @@ function startAnswerAfterBuzz(){
 
         });
 
-
     publishQuizState(
 
         currentTeam===3 ||
         currentTeam===4
-        ? "STEAL"
-        : "BUZZ",
+        ?
+        "STEAL"
+        :
+        "BUZZ",
 
         currentTeam===1 ||
         currentTeam===4
-        ? "player1"
-        : "player2"
+        ?
+        "player1"
+        :
+        "player2"
 
     );
-
 
     startAnswerTimer();
 
@@ -2601,7 +2546,6 @@ function loadQuestion(){
         return;
     }
 
-
     currentTeam=0;
     answered=false;
     answerAttempts=0;
@@ -2613,13 +2557,11 @@ function loadQuestion(){
     autoNextAfterBgm1=false;
     lastRemoteTimestamp=0;
 
-
     if(currentBgm1){
 
         currentBgm1.onended=null;
 
     }
-
 
     team1Box.classList.remove(
         "buzzer-winner",
@@ -2631,10 +2573,8 @@ function loadQuestion(){
         "hidden-team"
     );
 
-
     buzz1.innerText="Ready";
     buzz2.innerText="Ready";
-
 
     progressElement.innerText =
         `Question ${
@@ -2643,17 +2583,13 @@ function loadQuestion(){
             questions.length
         }`;
 
-
     const q =
         questions[currentQuestion];
-
 
     questionElement.innerText =
         q.question;
 
-
     choicesElement.innerHTML="";
-
 
     ["A","B","C","D"].forEach(
         (letter,index)=>{
@@ -2663,20 +2599,26 @@ function loadQuestion(){
                     "button"
                 );
 
-
             b.className="choice";
-
 
             b.innerText =
                 letter +
                 ". " +
                 q.choices[index];
 
-
             b.disabled=false;
 
-
             b.onclick=()=>{
+
+                /*
+                 * MANUAL HOST CLICK
+                 */
+                if(
+                    timerMode==="buzz"
+                ){
+
+                    return;
+                }
 
                 if(
                     !b.classList.contains(
@@ -2690,34 +2632,46 @@ function loadQuestion(){
 
                     revealedChoices++;
 
-
                     publishQuizState(
                         currentTeam===0
-                        ? "WAITING"
-                        : "BUZZ",
+                        ?
+                        "WAITING"
+                        :
+                        "BUZZ",
 
                         currentTeam===1 ||
                         currentTeam===4
-                        ? "player1"
+                        ?
+                        "player1"
                         :
                         currentTeam===2 ||
                         currentTeam===3
-                        ? "player2"
-                        : null
+                        ?
+                        "player2"
+                        :
+                        null
                     );
-
 
                     sendScreenState();
 
                 }
 
-
                 if(currentTeam===0){
 
+                    /*
+                     * Kapag 4 na,
+                     * start buzz countdown.
+                     */
+                    if(
+                        revealedChoices>=4
+                    ){
+
+                        startBuzzTimer();
+
+                    }
+
                     return;
-
                 }
-
 
                 selectAnswer(
                     index,
@@ -2726,19 +2680,15 @@ function loadQuestion(){
 
             };
 
-
             choicesElement.appendChild(b);
 
         }
     );
 
-
     stopTimers();
-
     hideTimer();
 
     messageElement.innerText="";
-
 
     publishRoundStart();
 
@@ -2762,7 +2712,6 @@ function stopTimers(){
         buzzTimer=null;
 
     }
-
 
     if(answerTimer){
 
@@ -2812,41 +2761,45 @@ function showTimer(
 
     timerSeconds=seconds;
 
-
     timerElement.style.display =
         "block";
-
 
     timerElement.innerText =
         seconds;
 
-
     timerElement.style.borderColor =
         mode==="buzz"
-        ? "#f1c40f"
-        : "#e67e22";
-
+        ?
+        "#f1c40f"
+        :
+        "#e67e22";
 
     timerElement.style.color =
         mode==="buzz"
-        ? "#f1c40f"
-        : "#e67e22";
-
+        ?
+        "#f1c40f"
+        :
+        "#e67e22";
 
     publishQuizState(
 
         mode==="buzz"
-        ? "READY"
-        : "BUZZ",
+        ?
+        "READY"
+        :
+        "BUZZ",
 
         currentTeam===1 ||
         currentTeam===4
-        ? "player1"
+        ?
+        "player1"
         :
         currentTeam===2 ||
         currentTeam===3
-        ? "player2"
-        : null
+        ?
+        "player2"
+        :
+        null
 
     );
 
@@ -2865,34 +2818,49 @@ function hideTimer(){
 }
 
 
+/* =========================================================
+   BUZZ COUNTDOWN
+========================================================= */
+
 function startBuzzTimer(){
 
     stopTimers();
 
-
+    /*
+     * START EXACTLY AT 10
+     */
     showTimer(
         10,
         "buzz"
     );
-
 
     publishQuizState(
         "READY",
         null
     );
 
+    sendScreenState();
 
     buzzTimer =
         setInterval(()=>{
+
+            /*
+             * MAY NAG-BUZZ NA
+             * STOP. HUWAG I-RESET.
+             */
+            if(currentTeam!==0){
+
+                stopBuzzTimer();
+
+                return;
+            }
 
             timerSeconds--;
 
             timerElement.innerText =
                 timerSeconds;
 
-
             sendScreenState();
-
 
             if(
                 timerSeconds<=0
@@ -2902,16 +2870,22 @@ function startBuzzTimer(){
 
                 hideTimer();
 
-
                 publishQuizState(
                     "WAITING",
                     null
                 );
 
+                sendScreenState();
 
+                /*
+                 * WALANG NAG-BUZZ
+                 */
                 setTimeout(()=>{
 
-                    if(!answered){
+                    if(
+                        !answered &&
+                        currentTeam===0
+                    ){
 
                         nextQuestion();
 
@@ -2926,23 +2900,24 @@ function startBuzzTimer(){
 }
 
 
+/* =========================================================
+   ANSWER COUNTDOWN
+========================================================= */
+
 function startAnswerTimer(){
 
     stopTimers();
-
 
     showTimer(
         10,
         "answer"
     );
 
-
     timerSound.currentTime=0;
 
     timerSound
         .play()
         .catch(()=>{});
-
 
     answerTimer =
         setInterval(()=>{
@@ -2952,9 +2927,7 @@ function startAnswerTimer(){
             timerElement.innerText =
                 timerSeconds;
 
-
             sendScreenState();
-
 
             if(
                 timerSeconds<=0
@@ -2983,11 +2956,9 @@ function handleAnswerTimeout(){
 
     if(answered)return;
 
-
     stopTimers();
     stopTimerSound();
     hideTimer();
-
 
     document
         .querySelectorAll(".choice")
@@ -2997,9 +2968,7 @@ function handleAnswerTimeout(){
 
         });
 
-
     answerAttempts++;
-
 
     wrongSound.currentTime=0;
 
@@ -3007,15 +2976,12 @@ function handleAnswerTimeout(){
         .play()
         .catch(()=>{});
 
-
     if(answerAttempts>=2){
 
         revealCorrectAnswer();
 
         return;
-
     }
-
 
     prepareNextAttempt();
 
@@ -3031,18 +2997,15 @@ function revealCorrectAnswer(){
     const q =
         questions[currentQuestion];
 
-
     const buttons =
         document.querySelectorAll(
             ".choice"
         );
 
-
     buttons.forEach(
         (b,i)=>{
 
             b.disabled=true;
-
 
             if(
                 i===q.answer
@@ -3057,7 +3020,6 @@ function revealCorrectAnswer(){
         }
     );
 
-
     selectedAnswerIndex =
         q.answer;
 
@@ -3065,17 +3027,17 @@ function revealCorrectAnswer(){
 
     answered=true;
 
-
     stopTimers();
     stopTimerSound();
     hideTimer();
 
+    messageElement.innerText =
+        "✅ END ROUND";
 
     publishQuizState(
         "FINISHED",
         null
     );
-
 
     sendScreenState();
 
@@ -3096,7 +3058,6 @@ function prepareNextAttempt(){
 
     }
 
-
     if(
         currentTeam===1 ||
         currentTeam===4
@@ -3105,7 +3066,6 @@ function prepareNextAttempt(){
         lockedTeam=1;
 
         currentTeam=3;
-
 
         team1Box.classList.add(
             "hidden-team"
@@ -3119,26 +3079,22 @@ function prepareNextAttempt(){
             "buzzer-winner"
         );
 
-
         buzz1.innerText =
             "❌ WRONG";
 
         buzz2.innerText =
             "🔴 STEAL";
 
-
         publishQuizState(
             "STEAL",
             "player2"
         );
-
 
     }else{
 
         lockedTeam=2;
 
         currentTeam=4;
-
 
         team2Box.classList.add(
             "hidden-team"
@@ -3152,13 +3108,11 @@ function prepareNextAttempt(){
             "buzzer-winner"
         );
 
-
         buzz2.innerText =
             "❌ WRONG";
 
         buzz1.innerText =
             "🔵 STEAL";
-
 
         publishQuizState(
             "STEAL",
@@ -3166,7 +3120,6 @@ function prepareNextAttempt(){
         );
 
     }
-
 
     startAnswerTimer();
 
@@ -3193,7 +3146,6 @@ function selectAnswer(
         return;
     }
 
-
     if(
         !button.classList.contains(
             "revealed"
@@ -3206,24 +3158,22 @@ function selectAnswer(
 
         revealedChoices++;
 
-
         publishQuizState(
             "BUZZ",
 
             currentTeam===1 ||
             currentTeam===4
-            ? "player1"
-            : "player2"
+            ?
+            "player1"
+            :
+            "player2"
         );
-
 
         sendScreenState();
 
     }
 
-
     let answeringTeam=0;
-
 
     if(player==="player1"){
 
@@ -3242,11 +3192,12 @@ function selectAnswer(
                 currentTeam===1 ||
                 currentTeam===4
             )
-            ? 1
-            : 2;
+            ?
+            1
+            :
+            2;
 
     }
-
 
     if(
         lockedTeam===
@@ -3255,7 +3206,6 @@ function selectAnswer(
 
         return;
     }
-
 
     if(
         answeringTeam===1 &&
@@ -3266,7 +3216,6 @@ function selectAnswer(
         return;
     }
 
-
     if(
         answeringTeam===2 &&
         currentTeam!==2 &&
@@ -3276,19 +3225,15 @@ function selectAnswer(
         return;
     }
 
-
     const q =
         questions[currentQuestion];
-
 
     const buttons =
         document.querySelectorAll(
             ".choice"
         );
 
-
     selectedAnswerIndex=index;
-
 
     /*
      * CORRECT
@@ -3300,27 +3245,22 @@ function selectAnswer(
 
         answerResult="correct";
 
-
         stopTimers();
         stopTimerSound();
         hideTimer();
-
 
         button.classList.remove(
             "revealed",
             "wrong"
         );
 
-
         button.classList.add(
             "correct"
         );
 
-
         buttons.forEach(
             b=>b.disabled=true
         );
-
 
         correctSound.currentTime=0;
 
@@ -3328,12 +3268,10 @@ function selectAnswer(
             .play()
             .catch(()=>{});
 
-
         publishQuizState(
             "FINISHED",
             null
         );
-
 
         if(answeringTeam===1){
 
@@ -3351,15 +3289,15 @@ function selectAnswer(
 
         }
 
+        messageElement.innerText =
+            "Press Enter for next question";
 
         sendScreenState();
 
         playCorrectBGM();
 
         return;
-
     }
-
 
     /*
      * WRONG
@@ -3367,13 +3305,11 @@ function selectAnswer(
 
     answerResult="wrong";
 
-
     button.classList.add(
         "wrong"
     );
 
     button.disabled=true;
-
 
     wrongSound.currentTime=0;
 
@@ -3381,25 +3317,20 @@ function selectAnswer(
         .play()
         .catch(()=>{});
 
-
     stopTimers();
     stopTimerSound();
     hideTimer();
 
-
     answerAttempts++;
 
     lockedTeam=answeringTeam;
-
 
     if(answerAttempts>=2){
 
         revealCorrectAnswer();
 
         return;
-
     }
-
 
     prepareNextAttempt();
 
@@ -3422,6 +3353,13 @@ document.addEventListener(
             return;
         }
 
+        /*
+         * SPACEBAR WALANG NEXT FUNCTION
+         */
+        if(e.code==="Space"){
+
+            return;
+        }
 
         if(
             answered ||
@@ -3431,6 +3369,17 @@ document.addEventListener(
             return;
         }
 
+        /*
+         * HUWAG TUMANGGAP NG Z X C V
+         * HABANG BUZZ COUNTDOWN
+         */
+        if(
+            timerMode==="buzz" ||
+            timerMode==="answer"
+        ){
+
+            return;
+        }
 
         const map={
 
@@ -3441,17 +3390,13 @@ document.addEventListener(
 
         };
 
-
         const key =
             e.key.toLowerCase();
 
-
         if(!(key in map))return;
-
 
         const index =
             map[key];
-
 
         const b =
             document
@@ -3459,14 +3404,11 @@ document.addEventListener(
                 ".choice"
             )[index];
 
-
         if(!b)return;
 
         if(b.disabled)return;
 
-
         e.preventDefault();
-
 
         if(
             !b.classList.contains(
@@ -3480,21 +3422,20 @@ document.addEventListener(
 
             revealedChoices++;
 
-
             publishQuizState(
                 "BUZZ",
 
                 currentTeam===1 ||
                 currentTeam===4
-                ? "player1"
-                : "player2"
+                ?
+                "player1"
+                :
+                "player2"
             );
-
 
             sendScreenState();
 
         }
-
 
         selectAnswer(
             index,
@@ -3506,92 +3447,33 @@ document.addEventListener(
 
 
 /* =========================================================
-   SPACE = NEXT
+   NEXT QUESTION BUTTON
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    async e=>{
+nextQuestionBtn.onclick=async()=>{
 
-        if(
-            e.code!=="Space"
-        ){
-
-            return;
-        }
-
-
-        e.preventDefault();
-
-
-        if(
-            !answered ||
-            bgm1Fading
-        ){
-
-            return;
-        }
-
-
-        autoNextAfterBgm1=false;
-
-
-        stopTimers();
-        stopTimerSound();
-        hideTimer();
-
-
-        if(currentBgm1){
-
-            await new Promise(
-                r=>fadeOutBgm1(r)
-            );
-
-        }else{
-
-            bgm1Variants.forEach(
-                resetBgm1
-            );
-
-        }
-
-
-        await playAudio(
-            bgm2
-        );
-
-
-        nextQuestion();
-
-    }
-);
-
-
-/* =========================================================
-   NEXT QUESTION
-========================================================= */
-
-document.getElementById(
-    "nextQuestionBtn"
-).onclick=async()=>{
-
+    /*
+     * NEXT ONLY AFTER END ROUND
+     */
     if(!answered){
-
-        alert(
-            "Finish the current question first."
-        );
 
         return;
     }
 
+    /*
+     * HUWAG NEXT HABANG
+     * NAGFADE ANG BGM
+     */
+    if(bgm1Fading){
+
+        return;
+    }
 
     autoNextAfterBgm1=false;
-
 
     stopTimers();
     stopTimerSound();
     hideTimer();
-
 
     if(currentBgm1){
 
@@ -3599,22 +3481,40 @@ document.getElementById(
             r=>fadeOutBgm1(r)
         );
 
+    }else{
+
+        bgm1Variants.forEach(
+            resetBgm1
+        );
+
     }
 
-
-    await startQuizBGM();
+    await playAudio(
+        bgm2
+    );
 
     nextQuestion();
 
 };
 
 
+/* =========================================================
+   NEXT QUESTION
+========================================================= */
+
 function nextQuestion(){
+
+    /*
+     * EXTRA SAFETY
+     */
+    if(!answered){
+
+        return;
+    }
 
     stopTimers();
     stopTimerSound();
     hideTimer();
-
 
     if(
         currentQuestion>=
@@ -3624,9 +3524,7 @@ function nextQuestion(){
         return;
     }
 
-
     currentQuestion++;
-
 
     if(
         currentQuestion>=
@@ -3637,7 +3535,6 @@ function nextQuestion(){
 
         return;
     }
-
 
     loadQuestion();
 
@@ -3653,32 +3550,25 @@ function finishQuiz(){
     stopAudio(bgm);
     stopAudio(bgm2);
 
-
     bgm1Variants.forEach(
         resetBgm1
     );
 
-
     currentBgm1=null;
-
     autoNextAfterBgm1=false;
 
     clearBgm1Fade();
-
 
     stopTimers();
     stopTimerSound();
     hideTimer();
 
-
     questionElement.innerText="";
     choicesElement.innerHTML="";
     progressElement.innerText="";
 
-
     messageElement.innerText =
         "QUIZ FINISHED";
-
 
     team1Box.style.display =
         "none";
@@ -3686,10 +3576,8 @@ function finishQuiz(){
     team2Box.style.display =
         "none";
 
-
     connectBtn.style.display =
         "none";
-
 
     if(
         firebaseConnected &&
@@ -3719,7 +3607,6 @@ function finishQuiz(){
 
     }
 
-
     sendScreenState();
 
 }
@@ -3742,9 +3629,7 @@ questionsFile.addEventListener(
         const file =
             e.target.files[0];
 
-
         if(!file)return;
-
 
         if(
             !file.name
@@ -3761,19 +3646,15 @@ questionsFile.addEventListener(
             return;
         }
 
-
         try{
 
             const text =
                 await file.text();
 
-
             const data =
                 JSON.parse(text);
 
-
             let loadedQuestions=[];
-
 
             if(Array.isArray(data)){
 
@@ -3798,7 +3679,6 @@ questionsFile.addEventListener(
                 );
 
             }
-
 
             loadedQuestions =
                 loadedQuestions.filter(q=>{
@@ -3831,7 +3711,6 @@ questionsFile.addEventListener(
 
                 });
 
-
             if(
                 !loadedQuestions.length
             ){
@@ -3842,12 +3721,10 @@ questionsFile.addEventListener(
 
             }
 
-
             questions =
                 loadedQuestions.map(q=>{
 
                     let answer;
-
 
                     if(
                         typeof q.answer===
@@ -3874,7 +3751,6 @@ questionsFile.addEventListener(
                             .trim()
                             .toUpperCase();
 
-
                         answer={
 
                             A:0,
@@ -3885,7 +3761,6 @@ questionsFile.addEventListener(
                         }[letter];
 
                     }
-
 
                     return{
 
@@ -3900,7 +3775,6 @@ questionsFile.addEventListener(
                     };
 
                 });
-
 
             questions =
                 questions.filter(q=>{
@@ -3917,7 +3791,6 @@ questionsFile.addEventListener(
 
                 });
 
-
             if(!questions.length){
 
                 throw new Error(
@@ -3925,7 +3798,6 @@ questionsFile.addEventListener(
                 );
 
             }
-
 
             /*
              * RANDOMIZE
@@ -3943,7 +3815,6 @@ questionsFile.addEventListener(
                         (i+1)
                     );
 
-
                 [
                     questions[i],
                     questions[j]
@@ -3954,26 +3825,21 @@ questionsFile.addEventListener(
 
             }
 
-
             currentQuestion=0;
 
             scoreTeam1=0;
             scoreTeam2=0;
 
-
             score1Element.innerText="0";
             score2Element.innerText="0";
-
 
             saveQuestions();
 
             loadQuestion();
 
-
             alert(
                 `✅ ${questions.length} questions loaded successfully!`
             );
-
 
         }catch(error){
 
@@ -3982,12 +3848,10 @@ questionsFile.addEventListener(
                 error
             );
 
-
             alert(
                 "❌ Failed to load questions.\n\n"+
                 error.message
             );
-
 
             questions=[];
 
@@ -4008,9 +3872,7 @@ function saveRoomNumber(){
     const room =
         roomInput.value.trim();
 
-
     if(!room)return;
-
 
     localStorage.setItem(
         STORAGE_KEYS.ROOM,
@@ -4031,7 +3893,6 @@ function loadSavedRoom(){
             STORAGE_KEYS.ROOM
         );
 
-
     if(savedRoom){
 
         roomInput.value =
@@ -4050,7 +3911,6 @@ function saveQuestions(){
 
     if(!questions.length)return;
 
-
     try{
 
         localStorage.setItem(
@@ -4060,12 +3920,10 @@ function saveQuestions(){
             )
         );
 
-
         console.log(
             "Questions saved locally:",
             questions.length
         );
-
 
     }catch(error){
 
@@ -4073,7 +3931,6 @@ function saveQuestions(){
             "Failed to save questions:",
             error
         );
-
 
         alert(
             "Hindi ma-save ang questions sa browser. " +
@@ -4098,13 +3955,10 @@ function loadSavedQuestions(){
                 STORAGE_KEYS.QUESTIONS
             );
 
-
         if(!saved)return false;
-
 
         const parsed =
             JSON.parse(saved);
-
 
         if(
             !Array.isArray(parsed) ||
@@ -4115,7 +3969,6 @@ function loadSavedQuestions(){
 
         }
 
-
         questions=parsed;
 
         currentQuestion=0;
@@ -4123,20 +3976,15 @@ function loadSavedQuestions(){
         scoreTeam1=0;
         scoreTeam2=0;
 
-
         score1Element.innerText="0";
         score2Element.innerText="0";
 
-
         loadQuestion();
-
 
         messageElement.innerText =
             `💾 ${questions.length} saved questions loaded`;
 
-
         return true;
-
 
     }catch(error){
 
@@ -4145,11 +3993,9 @@ function loadSavedQuestions(){
             error
         );
 
-
         localStorage.removeItem(
             STORAGE_KEYS.QUESTIONS
         );
-
 
         return false;
 
@@ -4172,21 +4018,17 @@ roomInput.addEventListener(
                 ""
             );
 
-
         roomInput.classList.remove(
             "room-error",
             "room-ok",
             "room-checking"
         );
 
-
         roomWarning.classList.remove(
             "show"
         );
 
-
         firebaseConnected=false;
-
 
         connectionStatus.innerText =
             "Firebase: Disconnected";
@@ -4195,10 +4037,8 @@ roomInput.addEventListener(
             "connected"
         );
 
-
         connectBtn.innerText =
             "🔌 CONNECT ROOM";
-
 
         saveRoomNumber();
 
@@ -4233,11 +4073,12 @@ roomInput.addEventListener(
 window.addEventListener(
     "beforeunload",
     ()=>{
+
         /*
-         * Huwag gamitin ang async release dito.
-         * Ang Firebase onDisconnect() ang automatic
-         * na bahala sa lock kapag nawala ang connection.
+         * Firebase onDisconnect()
+         * ang bahala sa host lock.
          */
+
     }
 );
 
@@ -4256,7 +4097,7 @@ const restored =
 if(restored){
 
     messageElement.innerText =
-        `💾 ${questions.length} saved questions restored`;
+        `💾 ${questions.length} saved questions`;
 
 }else{
 
@@ -4287,13 +4128,10 @@ window.addEventListener(
                 STORAGE_KEYS.ROOM
             );
 
-
         if(!savedRoom)return;
-
 
         roomInput.value =
             savedRoom;
-
 
         setTimeout(
             ()=>{
