@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>QR Controller</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0"
+>
+
+<title>Questions Generator</title>
 
 <style>
 
@@ -14,224 +20,1484 @@
 
 html,body{
     margin:0;
-    width:100%;
     min-height:100%;
     font-family:Arial,sans-serif;
     background:#101010;
-    color:white;
+    color:#fff;
+}
+
+body{
+    padding:20px;
 }
 
 .container{
     width:100%;
-    min-height:100vh;
+    max-width:1000px;
+    margin:auto;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.header h1{
+    margin:0;
+    font-size:32px;
+}
+
+.header p{
+    color:#aaa;
+    margin-top:8px;
+}
+
+/* SUBJECT */
+
+.subject-card{
+    background:#1d1d1d;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #333;
+}
+
+.subject-title{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+#subjectInput{
+    width:100%;
+    border:0;
+    outline:none;
+    border-radius:10px;
+    padding:14px;
+    font-size:18px;
+    background:#fff;
+    color:#111;
+}
+
+/* CARD */
+
+.card{
+    background:#1d1d1d;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #333;
+}
+
+label.title{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+input[type="text"],
+textarea{
+    width:100%;
+    border:0;
+    outline:none;
+    border-radius:10px;
+    padding:14px;
+    font-size:17px;
+    background:#fff;
+    color:#111;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+/* CHOICES */
+
+.choices{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:15px;
+}
+
+.choice{
+    background:#292929;
+    border-radius:12px;
+    padding:12px;
+    border:2px solid #444;
+}
+
+.choice-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.choice-row input[type="text"]{
+    flex:1;
+}
+
+.answer-check{
+    width:24px;
+    height:24px;
+    cursor:pointer;
+}
+
+.answer-label{
+    font-size:13px;
+    color:#aaa;
+    margin-top:7px;
+    text-align:center;
+}
+
+/* BUTTONS */
+
+.buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:13px 20px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.add-btn{
+    background:#3498db;
+    color:#fff;
+}
+
+.generate-btn{
+    background:#27ae60;
+    color:#fff;
+}
+
+.download-btn{
+    background:#f39c12;
+    color:#fff;
+}
+
+.clear-btn{
+    background:#e74c3c;
+    color:#fff;
+}
+
+.import-btn{
+    background:#8e44ad;
+    color:#fff;
+}
+
+button:hover{
+    opacity:.85;
+}
+
+/* QUESTION LIST */
+
+.question-list{
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    gap:10px;
 }
 
-.title{
-    font-size:28px;
+.question-item{
+    background:#292929;
+    border-radius:10px;
+    padding:15px;
+    border-left:5px solid #3498db;
+}
+
+.question-item strong{
+    display:block;
+    margin-bottom:8px;
+}
+
+.question-item ol{
+    margin:5px 0 0 20px;
+    padding:0;
+    color:#ccc;
+}
+
+.question-item li.correct{
+    color:#2ecc71;
     font-weight:bold;
-    margin-bottom:25px;
-    text-align:center;
 }
 
-/* QR + NOTE */
-.qr-section{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:30px;
+.remove-btn{
+    margin-top:10px;
+    padding:7px 12px;
+    font-size:13px;
+    background:#c0392b;
+    color:#fff;
+}
+
+/* JSON */
+
+#jsonOutput{
     width:100%;
-    max-width:1100px;
+    min-height:300px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    background:#080808;
+    color:#00ff88;
+    border:1px solid #444;
 }
 
-.qr{
-    max-width:60vw;
-    max-height:65vh;
-    width:auto;
-    height:auto;
-    object-fit:contain;
-    background:white;
-    padding:10px;
-    border-radius:15px;
-    box-shadow:0 0 20px rgba(255,255,255,.15);
+/* PASTE */
+
+#pasteInput{
+    width:100%;
+    min-height:350px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    background:#080808;
+    color:#00ff88;
+    border:1px solid #444;
+    resize:vertical;
 }
 
-/* DONATION NOTE */
-.donation-note{
-    max-width:400px;
-    padding:25px;
-    background:#202020;
-    border:2px solid #3498db;
-    border-radius:15px;
-    text-align:center;
-    line-height:1.6;
-    font-size:18px;
-    box-shadow:0 0 20px rgba(52,152,219,.15);
-}
-
-.donation-title{
-    font-size:24px;
-    font-weight:bold;
+.paste-help{
+    color:#aaa;
+    font-size:14px;
+    line-height:1.5;
     margin-bottom:12px;
 }
 
-.donation-note p{
-    margin:0;
+.paste-example{
+    color:#777;
+    font-size:13px;
+    margin-top:10px;
 }
 
-/* SCAN TEXT */
-.scan-text{
-    margin-top:20px;
-    font-size:24px;
+/* COUNTER */
+
+.counter{
+    text-align:right;
+    color:#aaa;
+    margin-bottom:10px;
+}
+
+/* STATUS */
+
+.status{
+    margin-top:12px;
+    min-height:25px;
     font-weight:bold;
-    letter-spacing:2px;
-    text-align:center;
 }
 
-/* BUTTON */
-.controller-btn{
-    margin-top:15px;
-    padding:15px 35px;
-    background:#3498db;
-    color:white;
-    text-decoration:none;
-    border-radius:10px;
-    font-size:18px;
-    font-weight:bold;
-    display:inline-block;
-    transition:.2s;
+.success{
+    color:#2ecc71;
 }
 
-.controller-btn:hover{
-    transform:scale(1.05);
-    background:#2980b9;
+.error{
+    color:#e74c3c;
 }
 
 /* MOBILE */
+
 @media(max-width:700px){
 
-    .container{
-        padding:15px;
+    body{
+        padding:10px;
     }
 
-    .title{
-        font-size:22px;
-        margin-bottom:20px;
+    .choices{
+        grid-template-columns:1fr;
     }
 
-    .qr-section{
-        flex-direction:column;
-        gap:20px;
-    }
-
-    .qr{
-        max-width:85vw;
-        max-height:55vh;
-    }
-
-    .donation-note{
-        width:100%;
-        max-width:500px;
-        font-size:16px;
-        padding:20px;
-    }
-
-    .donation-title{
-        font-size:21px;
-    }
-
-    .scan-text{
-        font-size:20px;
-    }
-
-    .controller-btn{
-        font-size:16px;
-        padding:13px 25px;
+    .header h1{
+        font-size:25px;
     }
 
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-    <div class="title">
-        🎮 TEAM QUIZ CONTROLLER
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1>📝 QUESTIONS GENERATOR</h1>
+
+    <p>
+        Create questions and export them as JSON
+    </p>
+
+</div>
+
+
+<!-- SUBJECT -->
+
+<div class="subject-card">
+
+    <label class="subject-title">
+        📚 INPUT SUBJECT / FILE NAME
+    </label>
+
+    <input
+        type="text"
+        id="subjectInput"
+        placeholder="Example: SCIENCE"
+        autocomplete="off"
+    >
+
+    <div
+        style="
+            color:#888;
+            margin-top:8px;
+            font-size:13px;
+        "
+    >
+    </div>
+
+</div>
+
+
+<!-- QUESTION FORM -->
+
+<div class="card">
+
+    <label class="title">
+        QUESTION
+    </label>
+
+    <textarea
+        id="questionInput"
+        placeholder="Enter question here..."
+    ></textarea>
+
+
+    <div style="margin-top:20px">
+
+        <label class="title">
+            CHOICES
+        </label>
+
     </div>
 
 
-    <div class="qr-section">
-
-        <!-- QR CODE -->
-        <img
-            src="qr.jfif"
-            alt="QR Code"
-            class="qr"
-        >
+    <div class="choices">
 
 
-        <!-- DONATION NOTE -->
-        <div class="donation-note">
+        <!-- A -->
 
-            <div class="donation-title">
-                ❤️ MUNTING SUPORTA
+        <div class="choice">
+
+            <div class="choice-row">
+
+                <input
+                    type="text"
+                    id="choice0"
+                    placeholder="Choice A"
+                >
+
+                <input
+                    type="checkbox"
+                    class="answer-check"
+                    data-index="0"
+                    title="Correct answer"
+                >
+
             </div>
 
-            <p>
-                Kung nagustuhan po ninyo ang quiz na ito,
-                maaari po kayong mag-donate ng piso
-                mula sa puso para sa patuloy na
-                pag-develop ng ating app.
-            </p>
+            <div class="answer-label">
+                ☑ Check if correct answer
+            </div>
 
-            <br>
+        </div>
 
-            <p>
-                Boluntaryo lamang po ito at hindi sapilitan.
-            </p>
 
-            <br>
+        <!-- B -->
 
-            <p>
-                Gcash name: Elena S.   09361985075
-            </p>
+        <div class="choice">
 
-            <br>
+            <div class="choice-row">
 
-            <p>
-                Marami pong salamat at
-                <strong>God Bless everyone! 🙏</strong>
-            </p>
+                <input
+                    type="text"
+                    id="choice1"
+                    placeholder="Choice B"
+                >
+
+                <input
+                    type="checkbox"
+                    class="answer-check"
+                    data-index="1"
+                    title="Correct answer"
+                >
+
+            </div>
+
+            <div class="answer-label">
+                ☑ Check if correct answer
+            </div>
+
+        </div>
+
+
+        <!-- C -->
+
+        <div class="choice">
+
+            <div class="choice-row">
+
+                <input
+                    type="text"
+                    id="choice2"
+                    placeholder="Choice C"
+                >
+
+                <input
+                    type="checkbox"
+                    class="answer-check"
+                    data-index="2"
+                    title="Correct answer"
+                >
+
+            </div>
+
+            <div class="answer-label">
+                ☑ Check if correct answer
+            </div>
+
+        </div>
+
+
+        <!-- D -->
+
+        <div class="choice">
+
+            <div class="choice-row">
+
+                <input
+                    type="text"
+                    id="choice3"
+                    placeholder="Choice D"
+                >
+
+                <input
+                    type="checkbox"
+                    class="answer-check"
+                    data-index="3"
+                    title="Correct answer"
+                >
+
+            </div>
+
+            <div class="answer-label">
+                ☑ Check if correct answer
+            </div>
 
         </div>
 
     </div>
 
 
-    <div class="scan-text">
-        📱 SCAN QR CODE TO CONNECT CONTROLLER
+    <div
+        id="status"
+        class="status"
+    ></div>
+
+
+    <div class="buttons">
+
+        <button
+            class="add-btn"
+            onclick="addQuestion()"
+        >
+            ➕ ADD QUESTION
+        </button>
+
+        <button
+            class="clear-btn"
+            onclick="clearForm()"
+        >
+            🗑️ CLEAR FORM
+        </button>
+
     </div>
-     <br>
-
-            <p>
-                Note: Need internet to connect
-            </p>
-
-
-    <a
-        href="https://echomixjstv-hash.github.io/controller/"
-        class="controller-btn">
-        🎮 OPEN CONTROLLER
-    </a>
 
 </div>
 
+
+<!-- QUESTION LIST -->
+
+<div class="card">
+
+    <div class="counter">
+
+        Questions:
+        <span id="questionCount">0</span>
+
+    </div>
+
+
+    <div
+        id="questionList"
+        class="question-list"
+    >
+
+        <div
+            style="
+                text-align:center;
+                color:#777;
+                padding:20px;
+            "
+        >
+            No questions added yet.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- GENERATE -->
+
+<div class="card">
+
+    <div class="buttons">
+
+        <button
+            class="generate-btn"
+            onclick="generateJSON()"
+        >
+            ⚙️ GENERATE
+        </button>
+
+        <button
+            class="download-btn"
+            onclick="downloadJSON()"
+        >
+            💾 DOWNLOAD GENERATED QUESTIONS
+        </button>
+
+        <a href="https://echomixjstv-hash.github.io/quizhost" style="
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 20px;
+    background:#3498db;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+">
+    🏠 HOST QUIZ
+</a>
+
+    </div>
+
+</div>
+
+
+<!-- JSON OUTPUT -->
+
+<div class="card">
+
+    <label class="title">
+        GENERATED JSON
+    </label>
+
+    <textarea
+        id="jsonOutput"
+        readonly
+        placeholder="Generated JSON will appear here..."
+    ></textarea>
+
+</div>
+
+
+<!-- PASTE -->
+
+<div class="card">
+
+    <label class="title">
+        📋 PASTE QUIZ
+    </label>
+
+    <div class="paste-help">
+
+        Maaari kang mag-paste ng buong code dito.
+        Pagkatapos ay pindutin ang
+        <b>IMPORT QUESTIONS</b>.
+
+    </div>
+
+
+    <textarea
+        id="pasteInput"
+        placeholder='Paste code here...
+
+Example:
+
+[
+  {
+    "question": "What is the capital of the Philippines?",
+    "choices": [
+      "Manila",
+      "Cebu",
+      "Davao",
+      "Baguio"
+    ],
+    "answer": 0
+  }
+]'
+    ></textarea>
+
+
+    <div class="buttons">
+
+        <button
+            class="import-btn"
+            onclick="importPastedQuestions()"
+        >
+            📥 IMPORT QUESTIONS
+        </button>
+
+        <button
+            class="clear-btn"
+            onclick="clearPaste()"
+        >
+            🗑️ CLEAR PASTE
+        </button>
+
+    </div>
+
+
+    <div class="paste-example">
+
+        Required format:
+        <b>question</b>,
+        <b>choices</b> = 4,
+        <b>answer</b> = 0-3
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let questions = [];
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const questionInput =
+    document.getElementById("questionInput");
+
+const questionCount =
+    document.getElementById("questionCount");
+
+const questionList =
+    document.getElementById("questionList");
+
+const jsonOutput =
+    document.getElementById("jsonOutput");
+
+const status =
+    document.getElementById("status");
+
+const pasteInput =
+    document.getElementById("pasteInput");
+
+
+/* =====================================================
+   CHECKBOX
+   ONLY ONE ANSWER
+===================================================== */
+
+document
+.querySelectorAll(".answer-check")
+.forEach(check => {
+
+    check.addEventListener("change", function(){
+
+        if(this.checked){
+
+            document
+            .querySelectorAll(".answer-check")
+            .forEach(other => {
+
+                if(other !== this){
+
+                    other.checked = false;
+
+                }
+
+            });
+
+        }
+
+    });
+
+});
+
+
+/* =====================================================
+   ADD QUESTION
+===================================================== */
+
+function addQuestion(){
+
+    status.innerText = "";
+    status.className = "status";
+
+
+    const question =
+        questionInput.value.trim();
+
+
+    const choices = [
+
+        document
+        .getElementById("choice0")
+        .value
+        .trim(),
+
+        document
+        .getElementById("choice1")
+        .value
+        .trim(),
+
+        document
+        .getElementById("choice2")
+        .value
+        .trim(),
+
+        document
+        .getElementById("choice3")
+        .value
+        .trim()
+
+    ];
+
+
+    const checks =
+        document.querySelectorAll(".answer-check");
+
+
+    let answer = -1;
+
+
+    checks.forEach((check,index) => {
+
+        if(check.checked){
+
+            answer = index;
+
+        }
+
+    });
+
+
+    /* VALIDATE QUESTION */
+
+    if(!question){
+
+        showError(
+            "❌ Please enter a question."
+        );
+
+        questionInput.focus();
+
+        return;
+
+    }
+
+
+    /* VALIDATE CHOICES */
+
+    for(let i=0;i<4;i++){
+
+        if(!choices[i]){
+
+            showError(
+                "❌ Please enter Choice " +
+                String.fromCharCode(65+i) +
+                "."
+            );
+
+            document
+            .getElementById("choice"+i)
+            .focus();
+
+            return;
+
+        }
+
+    }
+
+
+    /* VALIDATE ANSWER */
+
+    if(answer === -1){
+
+        showError(
+            "❌ Please check the correct answer."
+        );
+
+        return;
+
+    }
+
+
+    /* ADD */
+
+    questions.push({
+
+        question: question,
+
+        choices: choices,
+
+        answer: answer
+
+    });
+
+
+    renderQuestions();
+
+    generateJSON(false);
+
+    clearForm();
+
+
+    showSuccess(
+        "✅ Question added successfully!"
+    );
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderQuestions(){
+
+    questionCount.innerText =
+        questions.length;
+
+
+    if(!questions.length){
+
+        questionList.innerHTML = `
+
+            <div
+                style="
+                    text-align:center;
+                    color:#777;
+                    padding:20px;
+                "
+            >
+                No questions added yet.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    questionList.innerHTML = "";
+
+
+    questions.forEach((q,index) => {
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "question-item";
+
+
+        let choicesHTML = "";
+
+
+        q.choices.forEach((choice,i) => {
+
+            const letter =
+                String.fromCharCode(65+i);
+
+
+            const correct =
+                i === q.answer;
+
+
+            choicesHTML += `
+
+                <li class="${correct ? "correct" : ""}">
+
+                    ${letter}. ${escapeHTML(choice)}
+
+                    ${correct ? " ✅" : ""}
+
+                </li>
+
+            `;
+
+        });
+
+
+        item.innerHTML = `
+
+            <strong>
+                ${index+1}. ${escapeHTML(q.question)}
+            </strong>
+
+            <ol>
+                ${choicesHTML}
+            </ol>
+
+            <button
+                class="remove-btn"
+                onclick="removeQuestion(${index})"
+            >
+                🗑️ REMOVE
+            </button>
+
+        `;
+
+
+        questionList.appendChild(item);
+
+    });
+
+}
+
+
+/* =====================================================
+   REMOVE
+===================================================== */
+
+function removeQuestion(index){
+
+    questions.splice(index,1);
+
+    renderQuestions();
+
+
+    if(questions.length){
+
+        generateJSON(false);
+
+    }
+    else{
+
+        jsonOutput.value = "";
+
+    }
+
+}
+
+
+/* =====================================================
+   CLEAR FORM
+===================================================== */
+
+function clearForm(){
+
+    questionInput.value = "";
+
+
+    for(let i=0;i<4;i++){
+
+        document
+        .getElementById("choice"+i)
+        .value = "";
+
+    }
+
+
+    document
+    .querySelectorAll(".answer-check")
+    .forEach(check => {
+
+        check.checked = false;
+
+    });
+
+}
+
+
+/* =====================================================
+   GENERATE JSON
+===================================================== */
+
+function generateJSON(showMessage=true){
+
+    if(!questions.length){
+
+        if(showMessage){
+
+            showError(
+                "❌ Add at least one question first."
+            );
+
+        }
+
+        return "";
+
+    }
+
+
+    const json =
+        JSON.stringify(
+            questions,
+            null,
+            2
+        );
+
+
+    jsonOutput.value = json;
+
+
+    if(showMessage){
+
+        showSuccess(
+            "✅ " +
+            questions.length +
+            " question(s) generated."
+        );
+
+    }
+
+
+    return json;
+
+}
+
+
+/* =====================================================
+   GET FILE NAME
+===================================================== */
+
+function getSubject(){
+
+    let subject =
+        document
+        .getElementById("subjectInput")
+        .value
+        .trim();
+
+
+    if(!subject){
+
+        return "questions";
+
+    }
+
+
+    /* Remove Windows-invalid characters */
+
+    subject =
+        subject.replace(
+            /[<>:"/\\|?*]/g,
+            ""
+        );
+
+
+    /* Replace spaces */
+
+    subject =
+        subject.replace(
+            /\s+/g,
+            "_"
+        );
+
+
+    return subject || "questions";
+
+}
+
+
+/* =====================================================
+   DOWNLOAD JSON
+===================================================== */
+
+function downloadJSON(){
+
+    if(!questions.length){
+
+        showError(
+            "❌ Add at least one question first."
+        );
+
+        return;
+
+    }
+
+
+    const json =
+        JSON.stringify(
+            questions,
+            null,
+            2
+        );
+
+
+    jsonOutput.value = json;
+
+
+    const blob =
+        new Blob(
+            [json],
+            {
+                type:"application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    const filename =
+        getSubject() + ".json";
+
+
+    a.href = url;
+
+    a.download = filename;
+
+    a.style.display = "none";
+
+
+    document.body.appendChild(a);
+
+
+    a.click();
+
+
+    document.body.removeChild(a);
+
+
+    /* Give browser time before revoke */
+
+    setTimeout(() => {
+
+        URL.revokeObjectURL(url);
+
+    },1000);
+
+
+    showSuccess(
+        "✅ " + filename + " downloaded!"
+    );
+
+}
+
+
+/* =====================================================
+   IMPORT PASTED JSON
+===================================================== */
+
+function importPastedQuestions(){
+
+    const text =
+        pasteInput.value.trim();
+
+
+    if(!text){
+
+        showError(
+            "❌ Please paste JSON first."
+        );
+
+        pasteInput.focus();
+
+        return;
+
+    }
+
+
+    let parsed;
+
+
+    try{
+
+        parsed =
+            JSON.parse(text);
+
+    }
+    catch(error){
+
+        showError(
+            "❌ Invalid JSON format."
+        );
+
+        return;
+
+    }
+
+
+    if(!Array.isArray(parsed)){
+
+        showError(
+            "❌ JSON must be an array."
+        );
+
+        return;
+
+    }
+
+
+    /* Validate every question */
+
+    for(
+        let i=0;
+        i<parsed.length;
+        i++
+    ){
+
+        const q = parsed[i];
+
+
+        if(
+            !q ||
+            typeof q.question !== "string" ||
+            !q.question.trim() ||
+            !Array.isArray(q.choices) ||
+            q.choices.length !== 4 ||
+            !Number.isInteger(q.answer) ||
+            q.answer < 0 ||
+            q.answer > 3
+        ){
+
+            showError(
+                "❌ Invalid question format at item " +
+                (i+1) +
+                "."
+            );
+
+            return;
+
+        }
+
+
+        for(let c=0;c<4;c++){
+
+            if(
+                typeof q.choices[c] !== "string" ||
+                !q.choices[c].trim()
+            ){
+
+                showError(
+                    "❌ Invalid Choice " +
+                    String.fromCharCode(65+c) +
+                    " at question " +
+                    (i+1) +
+                    "."
+                );
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    /* Clean imported data */
+
+    const imported =
+        parsed.map(q => ({
+
+            question:
+                q.question.trim(),
+
+            choices:
+                q.choices.map(
+                    choice => choice.trim()
+                ),
+
+            answer:
+                q.answer
+
+        }));
+
+
+    /*
+       ADD IMPORTED QUESTIONS
+       TO EXISTING QUESTIONS
+    */
+
+    questions =
+        questions.concat(imported);
+
+
+    renderQuestions();
+
+    generateJSON(false);
+
+
+    showSuccess(
+        "✅ " +
+        imported.length +
+        " question(s) imported! Total: " +
+        questions.length
+    );
+
+
+    /* Keep paste box so user can see what was imported */
+
+}
+
+
+/* =====================================================
+   CLEAR PASTE
+===================================================== */
+
+function clearPaste(){
+
+    pasteInput.value = "";
+
+    showSuccess(
+        "Paste box cleared."
+    );
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function showSuccess(text){
+
+    status.innerText = text;
+
+    status.className =
+        "status success";
+
+}
+
+
+function showError(text){
+
+    status.innerText = text;
+
+    status.className =
+        "status error";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(text){
+
+    return String(text)
+
+        .replace(/&/g,"&amp;")
+
+        .replace(/</g,"&lt;")
+
+        .replace(/>/g,"&gt;")
+
+        .replace(/"/g,"&quot;")
+
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   INITIAL
+===================================================== */
+
+renderQuestions();
+
+
+/* =====================================================
+   ENTER KEY SHORTCUT
+===================================================== */
+
+/*
+   Ctrl + Enter sa question box
+   = ADD QUESTION
+*/
+
+questionInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.ctrlKey &&
+            event.key === "Enter"
+        ){
+
+            event.preventDefault();
+
+            addQuestion();
+
+        }
+
+    }
+);
+
+
+/*
+   Ctrl + Enter sa paste box
+   = IMPORT
+*/
+
+pasteInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.ctrlKey &&
+            event.key === "Enter"
+        ){
+
+            event.preventDefault();
+
+            importPastedQuestions();
+
+        }
+
+    }
+);
+
+</script>
+
+
 </body>
+
 </html>
