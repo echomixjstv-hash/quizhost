@@ -13,10 +13,6 @@
 
 <style>
 
-/* =========================================================
-   BASE
-========================================================= */
-
 *{
     box-sizing:border-box;
 }
@@ -40,10 +36,7 @@ body{
     flex-direction:column;
 }
 
-
-/* =========================================================
-   TOP
-========================================================= */
+/* TOP */
 
 .top{
     display:flex;
@@ -68,10 +61,7 @@ body{
     background:#159447;
 }
 
-
-/* =========================================================
-   SCORES
-========================================================= */
+/* SCORES */
 
 .scores{
     display:flex;
@@ -164,10 +154,7 @@ body{
     font-weight:bold;
 }
 
-
-/* =========================================================
-   QUESTION
-========================================================= */
+/* QUESTION */
 
 .question-box{
     flex:1;
@@ -256,10 +243,7 @@ body{
     font-weight:bold;
 }
 
-
-/* =========================================================
-   TIMER
-========================================================= */
+/* TIMER */
 
 #timer{
     display:none;
@@ -281,10 +265,7 @@ body{
     color:#f1c40f;
 }
 
-
-/* =========================================================
-   BOTTOM CONTROLS
-========================================================= */
+/* BOTTOM */
 
 .bottom{
     height:55px;
@@ -347,10 +328,7 @@ body{
     justify-content:center;
 }
 
-
-/* =========================================================
-   ROOM
-========================================================= */
+/* ROOM */
 
 .room-area{
     position:relative;
@@ -420,10 +398,7 @@ body{
     display:block;
 }
 
-
-/* =========================================================
-   MOBILE
-========================================================= */
+/* MOBILE */
 
 @media(max-width:600px){
 
@@ -452,15 +427,9 @@ body{
 </style>
 </head>
 
-
 <body>
 
 <div class="game">
-
-
-<!-- =====================================================
-     TOP
-===================================================== -->
 
 <div class="top">
 
@@ -476,11 +445,6 @@ body{
     </div>
 
 </div>
-
-
-<!-- =====================================================
-     SCORES
-===================================================== -->
 
 <div class="scores">
 
@@ -509,7 +473,6 @@ body{
 
     </div>
 
-
     <div
         id="team2Box"
         class="team team2"
@@ -536,11 +499,6 @@ body{
     </div>
 
 </div>
-
-
-<!-- =====================================================
-     QUESTION BOX
-===================================================== -->
 
 <div class="question-box">
 
@@ -570,15 +528,7 @@ body{
 
 </div>
 
-
-<!-- =====================================================
-     CONTROLS
-===================================================== -->
-
 <div class="bottom">
-
-
-    <!-- ROOM -->
 
     <div class="room-area">
 
@@ -586,7 +536,7 @@ body{
             id="roomWarning"
             class="room-warning"
         >
-            ⚠️ ROOM NOT AVAILABLE
+            ⚠️ ROOM ALREADY IN USE
         </div>
 
         <input
@@ -605,18 +555,12 @@ body{
 
     </div>
 
-
-    <!-- CONNECT -->
-
     <button
         id="connectBtn"
         class="control-btn connect"
     >
         🔌 CONNECT ROOM
     </button>
-
-
-    <!-- UPLOAD -->
 
     <label
         for="questionsFile"
@@ -632,9 +576,6 @@ body{
         style="display:none"
     >
 
-
-    <!-- NEXT -->
-
     <button
         id="nextQuestionBtn"
         class="control-btn"
@@ -643,9 +584,6 @@ body{
         ▶ NEXT QUESTION
     </button>
 
-
-    <!-- SECOND SCREEN -->
-
     <button
         id="secondScreenBtn"
         class="control-btn second-screen"
@@ -653,18 +591,12 @@ body{
         🖥️ SECOND SCREEN
     </button>
 
-
-    <!-- CONTROLLER -->
-
     <a
         href="controller.html"
         class="control-btn controller-btn"
     >
         🎮 CONTROLLER
     </a>
-
-
-    <!-- QUESTION GENERATOR -->
 
     <a
         href="question-generation.html"
@@ -677,15 +609,8 @@ body{
 
 </div>
 
-
-<!-- =====================================================
-     FIREBASE
-===================================================== -->
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 
 <script>
 
@@ -693,11 +618,9 @@ body{
    AUDIO
 ========================================================= */
 
-const bgm =
-    new Audio("audio/bgm.mp3");
+const bgm = new Audio("audio/bgm.mp3");
 
 const bgm1Variants = [
-
     new Audio("audio/bgm1-1.mp3"),
     new Audio("audio/bgm1-2.mp3"),
     new Audio("audio/bgm1-3.mp3"),
@@ -706,96 +629,67 @@ const bgm1Variants = [
     new Audio("audio/bgm1-6.mp3"),
     new Audio("audio/bgm1-7.mp3"),
     new Audio("audio/bgm1-8.mp3")
-
 ];
 
-const bgm2 =
-    new Audio("audio/bgm2.mp3");
+const bgm2 = new Audio("audio/bgm2.mp3");
 
-const correctSound =
-    new Audio("audio/Fact.mp3");
+const correctSound = new Audio("audio/Fact.mp3");
 
-const wrongSound =
-    new Audio("audio/mali.mp3");
+const wrongSound = new Audio("audio/mali.mp3");
 
-const timerSound =
-    new Audio("audio/timer.mp3");
+const timerSound = new Audio("audio/timer.mp3");
 
+bgm.loop = true;
+bgm.volume = .5;
 
-bgm.loop=true;
-bgm.volume=.5;
-
-bgm2.volume=.5;
-
-timerSound.volume=.5;
-
+bgm2.volume = .5;
+timerSound.volume = .5;
 
 bgm1Variants.forEach(a=>{
-
-    a.loop=false;
-    a.volume=.5;
-
+    a.loop = false;
+    a.volume = .5;
 });
 
-
-let musicStarted=false;
-
-let currentBgm1=null;
-
-let bgm1FadeInterval=null;
-
-let bgm1Fading=false;
-
-let autoNextAfterBgm1=false;
-
+let musicStarted = false;
+let currentBgm1 = null;
+let bgm1FadeInterval = null;
+let bgm1Fading = false;
+let autoNextAfterBgm1 = false;
 
 async function playAudio(a){
 
     try{
-
         await a.play();
-
         return true;
-
     }catch(e){
-
-        console.log(
-            "Audio blocked:",
-            e
-        );
-
+        console.log("Audio blocked:",e);
         return false;
-
     }
 
 }
 
-
 function stopAudio(a){
 
     a.pause();
-    a.currentTime=0;
+    a.currentTime = 0;
 
 }
-
 
 async function startInitialBGM(){
 
     if(musicStarted)return;
 
-    musicStarted=true;
+    musicStarted = true;
 
     await playAudio(bgm);
 
 }
-
 
 document.addEventListener(
     "click",
     startInitialBGM,
     {once:true}
 );
-
 
 function clearBgm1Fade(){
 
@@ -805,60 +699,50 @@ function clearBgm1Fade(){
             bgm1FadeInterval
         );
 
-        bgm1FadeInterval=null;
-
+        bgm1FadeInterval = null;
     }
 
-    bgm1Fading=false;
+    bgm1Fading = false;
 
 }
-
 
 function resetBgm1(a){
 
-    a.onended=null;
-
+    a.onended = null;
     a.pause();
-
-    a.currentTime=0;
-
-    a.volume=.5;
+    a.currentTime = 0;
+    a.volume = .5;
 
 }
 
-
 function fadeOutBgm1(callback){
 
-    const a=currentBgm1;
+    const a = currentBgm1;
 
     if(!a){
 
         if(callback)callback();
 
         return;
-
     }
 
     if(bgm1Fading)return;
 
-    bgm1Fading=true;
+    bgm1Fading = true;
 
-    const start=a.volume;
+    const start = a.volume;
+    const steps = 30;
+    let n = 0;
 
-    const steps=30;
-
-    let n=0;
-
-
-    bgm1FadeInterval=setInterval(()=>{
+    bgm1FadeInterval = setInterval(()=>{
 
         n++;
 
-        a.volume=Math.max(
-            0,
-            start*(1-n/steps)
-        );
-
+        a.volume =
+            Math.max(
+                0,
+                start * (1-n/steps)
+            );
 
         if(n>=steps){
 
@@ -866,31 +750,21 @@ function fadeOutBgm1(callback){
                 bgm1FadeInterval
             );
 
-            bgm1FadeInterval=null;
+            bgm1FadeInterval = null;
 
             a.pause();
-
-            a.currentTime=0;
-
-            a.volume=.5;
-
-            a.onended=null;
-
+            a.currentTime = 0;
+            a.volume = .5;
+            a.onended = null;
 
             if(currentBgm1===a){
-
-                currentBgm1=null;
-
+                currentBgm1 = null;
             }
 
-
-            bgm1Fading=false;
-
+            bgm1Fading = false;
 
             if(callback){
-
                 callback();
-
             }
 
         }
@@ -899,13 +773,10 @@ function fadeOutBgm1(callback){
 
 }
 
-
 async function startQuizBGM(){
 
     stopAudio(bgm);
-
     stopAudio(bgm2);
-
 
     if(currentBgm1){
 
@@ -915,29 +786,19 @@ async function startQuizBGM(){
 
     }
 
-
-    bgm1Variants.forEach(
-        resetBgm1
-    );
-
+    bgm1Variants.forEach(resetBgm1);
 
     await playAudio(bgm2);
 
 }
 
-
 async function playCorrectBGM(){
 
     stopAudio(bgm2);
-
     stopAudio(bgm);
 
-    bgm1Variants.forEach(
-        resetBgm1
-    );
-
+    bgm1Variants.forEach(resetBgm1);
     clearBgm1Fade();
-
 
     const a =
         bgm1Variants[
@@ -947,26 +808,23 @@ async function playCorrectBGM(){
             )
         ];
 
+    currentBgm1 = a;
 
-    currentBgm1=a;
+    autoNextAfterBgm1 = true;
 
-    autoNextAfterBgm1=true;
-
-
-    a.onended=()=>{
+    a.onended = ()=>{
 
         if(currentBgm1!==a)return;
 
-        a.currentTime=0;
+        a.currentTime = 0;
 
         a.play().catch(()=>{});
-
 
         fadeOutBgm1(()=>{
 
             if(autoNextAfterBgm1){
 
-                autoNextAfterBgm1=false;
+                autoNextAfterBgm1 = false;
 
                 startNextQuestionAfterBgm1();
 
@@ -976,18 +834,14 @@ async function playCorrectBGM(){
 
     };
 
-
     await playAudio(a);
 
 }
 
-
 async function startNextQuestionAfterBgm1(){
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
     await startQuizBGM();
@@ -1001,47 +855,38 @@ async function startNextQuestionAfterBgm1(){
    GAME STATE
 ========================================================= */
 
-let questions=[];
+let questions = [];
+let currentQuestion = 0;
 
-let currentQuestion=0;
+let scoreTeam1 = 0;
+let scoreTeam2 = 0;
 
-let scoreTeam1=0;
+let currentTeam = 0;
 
-let scoreTeam2=0;
+let answered = false;
+let answerAttempts = 0;
+let revealedChoices = 0;
 
-let currentTeam=0;
+let lockedTeam = 0;
 
-let answered=false;
+let selectedAnswerIndex = -1;
+let answerResult = "";
 
-let answerAttempts=0;
+let buzzTimer = null;
+let answerTimer = null;
 
-let revealedChoices=0;
+let timerSeconds = 0;
+let timerMode = "";
 
-let lockedTeam=0;
+let roomNumber = "";
+let roomRef = null;
 
-let selectedAnswerIndex=-1;
+let firebaseConnected = false;
 
-let answerResult="";
+let lastRemoteTimestamp = 0;
+let remoteListenerStarted = false;
 
-let buzzTimer=null;
-
-let answerTimer=null;
-
-let timerSeconds=0;
-
-let timerMode="";
-
-let roomNumber="";
-
-let roomRef=null;
-
-let firebaseConnected=false;
-
-let lastRemoteTimestamp=0;
-
-let remoteListenerStarted=false;
-
-let roomAvailabilityListener=null;
+let roomAvailabilityListener = null;
 
 
 /* =========================================================
@@ -1128,7 +973,7 @@ const timerElement =
    FIREBASE CONFIG
 ========================================================= */
 
-const firebaseConfig={
+const firebaseConfig = {
 
     apiKey:
         "AIzaSyAKzNpD9BeiT-eym0e1l_U3p_dggPrbEk",
@@ -1156,11 +1001,9 @@ const firebaseConfig={
 
 };
 
-
 firebase.initializeApp(
     firebaseConfig
 );
-
 
 const db =
     firebase.database();
@@ -1170,9 +1013,13 @@ const db =
    HOST LOCK SYSTEM
 ========================================================= */
 
-const HOST_ID_KEY = "teamQuiz_hostId";
+const HOST_ID_KEY =
+    "teamQuiz_hostId";
 
-let hostId = localStorage.getItem(HOST_ID_KEY);
+let hostId =
+    localStorage.getItem(
+        HOST_ID_KEY
+    );
 
 if(!hostId){
 
@@ -1196,20 +1043,24 @@ let hostLockActive = false;
 
 
 /* =========================================================
-   CLAIM HOST LOCK
+   HOST LOCK
 ========================================================= */
 
 async function claimHostLock(){
 
     if(!roomRef){
+
         return {
             success:false,
             reason:"NO_ROOM"
         };
+
     }
 
     hostLockRef =
-        roomRef.child("hostLock");
+        roomRef.child(
+            "hostLock"
+        );
 
     try{
 
@@ -1218,25 +1069,28 @@ async function claimHostLock(){
                 current=>{
 
                     /*
-                        Walang host:
-                        kunin natin ang lock.
-                    */
+                     * WALANG HOST
+                     */
+
                     if(current === null){
 
                         return {
+
                             hostId,
+
                             connectedAt:
                                 firebase.database
                                 .ServerValue
                                 .TIMESTAMP
+
                         };
 
                     }
 
                     /*
-                        Sarili nating host:
-                        allow reconnect/refresh.
-                    */
+                     * SARILI NATING HOST
+                     */
+
                     if(
                         current &&
                         current.hostId === hostId
@@ -1247,9 +1101,9 @@ async function claimHostLock(){
                     }
 
                     /*
-                        May ibang host na:
-                        transaction cancel.
-                    */
+                     * MAY IBANG HOST
+                     */
+
                     return;
 
                 },
@@ -1257,9 +1111,7 @@ async function claimHostLock(){
                 false
             );
 
-        if(
-            !result.committed
-        ){
+        if(!result.committed){
 
             return {
                 success:false,
@@ -1283,16 +1135,34 @@ async function claimHostLock(){
 
         }
 
-        hostLockActive=true;
+        hostLockActive = true;
 
         /*
-            Kapag biglang nawala ang browser/
-            internet connection, Firebase ang
-            magre-release ng lock.
-        */
+         * Automatic release kapag
+         * nawala ang browser/connection.
+         */
+
         await hostLockRef
             .onDisconnect()
             .remove();
+
+        /*
+         * IMPORTANT:
+         * Gagawa ng room data kahit
+         * wala pang existing room.
+         */
+
+        await roomRef.update({
+
+            roomNumber:
+                roomNumber,
+
+            updatedAt:
+                firebase.database
+                .ServerValue
+                .TIMESTAMP
+
+        });
 
         return {
             success:true
@@ -1326,16 +1196,11 @@ async function releaseHostLock(){
         !hostLockRef ||
         !hostLockActive
     ){
+
         return;
     }
 
     try{
-
-        /*
-            Transaction para siguradong
-            sarili lang nating lock ang
-            tatanggalin.
-        */
 
         await hostLockRef.transaction(
             current=>{
@@ -1363,13 +1228,13 @@ async function releaseHostLock(){
 
     }
 
-    hostLockActive=false;
+    hostLockActive = false;
 
 }
 
 
 /* =========================================================
-   HOST LOCK WARNING
+   ROOM WARNING
 ========================================================= */
 
 function showHostAlreadyConnected(){
@@ -1386,7 +1251,8 @@ function showHostAlreadyConnected(){
     );
 
     roomInput.classList.remove(
-        "room-ok"
+        "room-ok",
+        "room-checking"
     );
 
     connectionStatus.innerText =
@@ -1398,18 +1264,53 @@ function showHostAlreadyConnected(){
 
 }
 
+function showRoomChecking(){
 
-function resetRoomWarningText(){
+    roomWarning.classList.remove(
+        "show"
+    );
 
-    roomWarning.innerText =
-        "⚠️ ROOM NOT AVAILABLE";
+    roomInput.classList.remove(
+        "room-error",
+        "room-ok"
+    );
+
+    roomInput.classList.add(
+        "room-checking"
+    );
+
+    connectionStatus.innerText =
+        "Firebase: Checking Room...";
+
+    connectionStatus.classList.remove(
+        "connected"
+    );
 
 }
+
+function hideRoomWarning(){
+
+    roomWarning.classList.remove(
+        "show"
+    );
+
+    roomInput.classList.remove(
+        "room-error",
+        "room-checking"
+    );
+
+    roomInput.classList.add(
+        "room-ok"
+    );
+
+}
+
+
 /* =========================================================
    STORAGE
 ========================================================= */
 
-const STORAGE_KEYS={
+const STORAGE_KEYS = {
 
     ROOM:
         "teamQuiz_savedRoom",
@@ -1421,90 +1322,11 @@ const STORAGE_KEYS={
 
 
 /* =========================================================
-   ROOM WARNING
-========================================================= */
-
-function showRoomWarning(){
-
-    roomWarning.innerText =
-        "⚠️ ROOM NOT AVAILABLE";
-
-    roomWarning.classList.add(
-        "show"
-    );
-
-    roomInput.classList.add(
-        "room-error"
-    );
-
-    roomInput.classList.remove(
-        "room-ok"
-    );
-
-    connectionStatus.innerText =
-        "Firebase: Room Not Available";
-
-    connectionStatus.classList.remove(
-        "connected"
-    );
-
-}
-
-
-function hideRoomWarning(){
-
-    roomWarning.classList.remove(
-        "show"
-    );
-
-
-    roomInput.classList.remove(
-        "room-error",
-        "room-checking"
-    );
-
-    roomInput.classList.add(
-        "room-ok"
-    );
-
-}
-
-
-function showRoomChecking(){
-
-    roomWarning.classList.remove(
-        "show"
-    );
-
-
-    roomInput.classList.remove(
-        "room-error",
-        "room-ok"
-    );
-
-    roomInput.classList.add(
-        "room-checking"
-    );
-
-
-    connectionStatus.innerText =
-        "Firebase: Checking Room...";
-
-
-    connectionStatus.classList.remove(
-        "connected"
-    );
-
-}
-
-
-/* =========================================================
-   FIREBASE CONNECTION MONITOR
+   FIREBASE CONNECTION
 ========================================================= */
 
 const firebaseConnectionRef =
     db.ref(".info/connected");
-
 
 firebaseConnectionRef.on(
     "value",
@@ -1513,8 +1335,9 @@ firebaseConnectionRef.on(
         const connected =
             snap.val() === true;
 
-
         if(!connected){
+
+            firebaseConnected = false;
 
             connectionStatus.innerText =
                 "Firebase: Offline";
@@ -1524,114 +1347,37 @@ firebaseConnectionRef.on(
             );
 
             return;
-
         }
-
 
         console.log(
             "Firebase: ONLINE"
         );
 
+        /*
+         * Kapag may active host lock,
+         * connection status remains connected.
+         */
 
         if(
-            firebaseConnected &&
+            hostLockActive &&
             roomRef &&
             roomNumber
         ){
 
-            checkRoomAvailability();
+            firebaseConnected = true;
+
+            connectionStatus.innerText =
+                "Firebase: Connected • Room " +
+                roomNumber;
+
+            connectionStatus.classList.add(
+                "connected"
+            );
 
         }
 
     }
 );
-
-
-/* =========================================================
-   CHECK ROOM
-========================================================= */
-
-async function checkRoomAvailability(){
-
-    if(
-        !roomRef ||
-        !roomNumber
-    ){
-
-        return false;
-
-    }
-
-
-    try{
-
-        const snap =
-            await roomRef.once("value");
-
-
-        const exists =
-            snap.exists();
-
-
-        console.log(
-            "ROOM CHECK:",
-            roomNumber,
-            exists
-        );
-
-
-        if(!exists){
-
-            firebaseConnected=false;
-
-            showRoomWarning();
-
-            return false;
-
-        }
-
-
-        firebaseConnected=true;
-
-        hideRoomWarning();
-
-
-        connectionStatus.innerText =
-            "Firebase: Connected • Room " +
-            roomNumber;
-
-
-        connectionStatus.classList.add(
-            "connected"
-        );
-
-
-        return true;
-
-
-    }catch(error){
-
-        console.error(
-            "Room check error:",
-            error
-        );
-
-
-        firebaseConnected=false;
-
-        connectionStatus.innerText =
-            "Firebase: Connection Error";
-
-        connectionStatus.classList.remove(
-            "connected"
-        );
-
-
-        return false;
-
-    }
-
-}
 
 
 /* =========================================================
@@ -1642,7 +1388,6 @@ function stopRoomListeners(){
 
     if(!roomRef)return;
 
-
     if(roomAvailabilityListener){
 
         roomRef.off(
@@ -1650,106 +1395,23 @@ function stopRoomListeners(){
             roomAvailabilityListener
         );
 
-        roomAvailabilityListener=null;
+        roomAvailabilityListener = null;
 
     }
-
 
     roomRef
         .child("buzzer")
         .off();
 
-
     roomRef
         .child("answer")
         .off();
-
 
     roomRef
         .child("remoteButton")
         .off();
 
-
-    remoteListenerStarted=false;
-
-}
-
-
-/* =========================================================
-   WATCH ROOM
-========================================================= */
-
-function startRoomAvailabilityListener(){
-
-    if(!roomRef)return;
-
-
-    if(roomAvailabilityListener){
-
-        roomRef.off(
-            "value",
-            roomAvailabilityListener
-        );
-
-    }
-
-
-    roomAvailabilityListener =
-        snap=>{
-
-            const exists =
-                snap.exists();
-
-
-            console.log(
-                "ROOM CHANGED:",
-                roomNumber,
-                exists
-            );
-
-
-            if(!exists){
-
-                firebaseConnected=false;
-
-                showRoomWarning();
-
-
-                connectionStatus.innerText =
-                    "Firebase: Room Not Available";
-
-
-                connectionStatus.classList.remove(
-                    "connected"
-                );
-
-
-                return;
-
-            }
-
-
-            firebaseConnected=true;
-
-            hideRoomWarning();
-
-
-            connectionStatus.innerText =
-                "Firebase: Connected • Room " +
-                roomNumber;
-
-
-            connectionStatus.classList.add(
-                "connected"
-            );
-
-        };
-
-
-    roomRef.on(
-        "value",
-        roomAvailabilityListener
-    );
+    remoteListenerStarted = false;
 
 }
 
@@ -1758,7 +1420,7 @@ function startRoomAvailabilityListener(){
    CONNECT ROOM
 ========================================================= */
 
-connectBtn.onclick=async()=>{
+connectBtn.onclick = async ()=>{
 
     await startInitialBGM();
 
@@ -1772,13 +1434,13 @@ connectBtn.onclick=async()=>{
         );
 
         return;
-
     }
 
+
     /*
-        Kung connected na sa ibang room,
-        i-release muna ang old lock.
-    */
+     * Kapag ibang room,
+     * release ang dating lock.
+     */
 
     if(
         hostLockActive &&
@@ -1787,130 +1449,111 @@ connectBtn.onclick=async()=>{
 
         await releaseHostLock();
 
+        stopRoomListeners();
+
     }
 
-    roomNumber=value;
+
+    roomNumber = value;
 
     saveRoomNumber();
 
     roomRef =
         db.ref(
-            "rooms/"+roomNumber
+            "rooms/" +
+            roomNumber
         );
+
+
+    showRoomChecking();
+
 
     try{
 
         /*
-        =====================================================
-        STEP 1
-        CHECK KUNG EXISTING ANG ROOM
-        =====================================================
-        */
-
-        const snap =
-            await roomRef.once("value");
-
-        if(
-            snap.val() === null
-        ){
-
-            firebaseConnected=false;
-
-            showRoomWarning();
-
-            alert(
-                "Room "+roomNumber+
-                " is not available."
-            );
-
-            return;
-
-        }
-
-
-        /*
-        =====================================================
-        STEP 2
-        CLAIM HOST LOCK
-        =====================================================
-        */
+         * HINDI NA NAG-CHECK NG
+         * roomRef.once("value")
+         *
+         * Kahit walang existing room,
+         * pwede na itong kunin.
+         */
 
         const lockResult =
             await claimHostLock();
 
 
+        /*
+         * MAY IBANG HOST
+         */
+
         if(
             !lockResult.success
         ){
 
-            firebaseConnected=false;
-            hostLockActive=false;
+            firebaseConnected = false;
+
+            hostLockActive = false;
 
             showHostAlreadyConnected();
 
             alert(
-                "ROOM "+roomNumber+
+                "ROOM " +
+                roomNumber +
                 " IS ALREADY CONNECTED TO ANOTHER HOST."
             );
 
             return;
-
         }
 
 
         /*
-        =====================================================
-        ROOM SUCCESSFULLY CLAIMED
-        =====================================================
-        */
+         * SUCCESS
+         */
+
+        firebaseConnected = true;
 
         hideRoomWarning();
 
-        firebaseConnected=true;
 
         connectionStatus.innerText =
-            "Firebase: Connected • Room "+
+            "Firebase: Connected • Room " +
             roomNumber;
 
         connectionStatus.classList.add(
             "connected"
         );
 
+
         connectBtn.innerText =
             "✓ ROOM CONNECTED";
 
 
         /*
-        =====================================================
-        START FIREBASE LISTENERS
-        =====================================================
-        */
+         * LISTENERS
+         */
+
+        stopRoomListeners();
 
         listenFirebase();
 
-        /*
-            IMPORTANT:
-            Reset para makapag-listen ulit
-            kapag nagpalit ng room.
-        */
+        remoteListenerStarted = false;
 
-        remoteListenerStarted=false;
+        lastRemoteTimestamp = 0;
 
         listenRemoteButtons();
 
 
         /*
-        =====================================================
-        GET REMOTE TIMESTAMP
-        =====================================================
-        */
+         * LAST REMOTE TIMESTAMP
+         */
 
         roomRef
             .child("remoteButton")
             .once("value")
-            .then(s=>{
+            .then(snap=>{
 
-                const d=s.val();
+                const d =
+                    snap.val();
 
                 if(
                     d &&
@@ -1924,14 +1567,30 @@ connectBtn.onclick=async()=>{
 
                 }
 
-            });
+            })
+            .catch(console.error);
 
 
         /*
-        =====================================================
-        PUBLISH HOST STATE
-        =====================================================
-        */
+         * ROOM STATE
+         */
+
+        await roomRef.update({
+
+            roomNumber:
+                roomNumber,
+
+            updatedAt:
+                firebase.database
+                .ServerValue
+                .TIMESTAMP
+
+        });
+
+
+        /*
+         * PUBLISH CURRENT STATE
+         */
 
         publishQuizState(
             "WAITING",
@@ -1940,10 +1599,11 @@ connectBtn.onclick=async()=>{
 
 
         /*
-        =====================================================
-        ROOM AVAILABILITY MONITOR
-        =====================================================
-        */
+         * ROOM MONITOR
+         *
+         * Hindi na room existence ang basis.
+         * hostLock ang tinitingnan.
+         */
 
         if(roomAvailabilityListener){
 
@@ -1958,51 +1618,89 @@ connectBtn.onclick=async()=>{
         roomAvailabilityListener =
             snap=>{
 
+                const data =
+                    snap.val();
+
+
                 /*
-                    Room deleted
-                */
+                 * Room completely removed.
+                 */
 
-                if(
-                    snap.val() === null
-                ){
+                if(!data){
 
-                    showRoomWarning();
+                    firebaseConnected = false;
 
-                    firebaseConnected=false;
-
-                    hostLockActive=false;
+                    showHostAlreadyConnected();
 
                     connectionStatus.innerText =
-                        "Firebase: Room Not Available";
+                        "Firebase: Room Removed";
 
                     connectionStatus.classList.remove(
                         "connected"
                     );
 
                     return;
-
                 }
 
 
-                /*
-                    Room still exists
-                */
+                const lock =
+                    data.hostLock;
 
-                if(hostLockActive){
+
+                /*
+                 * SARILI NATIN
+                 */
+
+                if(
+                    lock &&
+                    lock.hostId === hostId
+                ){
+
+                    firebaseConnected = true;
 
                     hideRoomWarning();
 
-                    firebaseConnected=true;
-
                     connectionStatus.innerText =
-                        "Firebase: Connected • Room "+
+                        "Firebase: Connected • Room " +
                         roomNumber;
 
                     connectionStatus.classList.add(
                         "connected"
                     );
 
+                    return;
                 }
+
+
+                /*
+                 * IBANG HOST
+                 */
+
+                if(lock){
+
+                    firebaseConnected = false;
+
+                    showHostAlreadyConnected();
+
+                    return;
+                }
+
+
+                /*
+                 * WALANG HOST
+                 */
+
+                firebaseConnected = false;
+
+                hideRoomWarning();
+
+                connectionStatus.innerText =
+                    "Firebase: Room Available • " +
+                    roomNumber;
+
+                connectionStatus.classList.remove(
+                    "connected"
+                );
 
             };
 
@@ -2013,26 +1711,46 @@ connectBtn.onclick=async()=>{
         );
 
 
+        console.log(
+            "ROOM CONNECTED:",
+            roomNumber
+        );
+
+        console.log(
+            "HOST ID:",
+            hostId
+        );
+
+
     }catch(error){
 
         console.error(
-            "CONNECT ERROR:",
+            "CONNECT ROOM ERROR:",
             error
         );
 
-        firebaseConnected=false;
+        firebaseConnected = false;
 
-        hostLockActive=false;
+        hostLockActive = false;
 
-        showRoomWarning();
+        showHostAlreadyConnected();
+
+        connectionStatus.innerText =
+            "Firebase: Connection Error";
+
+        connectionStatus.classList.remove(
+            "connected"
+        );
 
         alert(
-            "Firebase connection error."
+            "Firebase connection error:\n\n" +
+            error.message
         );
 
     }
 
 };
+
 
 /* =========================================================
    FIREBASE LISTENERS
@@ -2047,7 +1765,6 @@ function listenFirebase(){
         .child("buzzer")
         .off("value");
 
-
     roomRef
         .child("answer")
         .off("value");
@@ -2059,8 +1776,8 @@ function listenFirebase(){
             "value",
             snap=>{
 
-                const d=snap.val();
-
+                const d =
+                    snap.val();
 
                 if(
                     !d ||
@@ -2073,11 +1790,10 @@ function listenFirebase(){
 
                 }
 
-
                 teamBuzz(
-                    d.player==="player1"
-                    ?1
-                    :2
+                    d.player === "player1"
+                    ? 1
+                    : 2
                 );
 
             }
@@ -2090,8 +1806,8 @@ function listenFirebase(){
             "value",
             snap=>{
 
-                const d=snap.val();
-
+                const d =
+                    snap.val();
 
                 if(
                     !d ||
@@ -2105,7 +1821,7 @@ function listenFirebase(){
                 }
 
 
-                const idx={
+                const idx = {
 
                     A:0,
                     B:1,
@@ -2119,7 +1835,7 @@ function listenFirebase(){
                 ];
 
 
-                if(idx===undefined)return;
+                if(idx === undefined)return;
 
 
                 const buttons =
@@ -2127,10 +1843,8 @@ function listenFirebase(){
                         ".choice"
                     );
 
-
                 const button =
                     buttons[idx];
-
 
                 if(!button)return;
 
@@ -2142,12 +1856,11 @@ function listenFirebase(){
 
 
                 if(
-                    p!=="player1" &&
-                    p!=="player2"
+                    p !== "player1" &&
+                    p !== "player2"
                 ){
 
                     return;
-
                 }
 
 
@@ -2193,11 +1906,9 @@ function listenRemoteButtons(){
     ){
 
         return;
-
     }
 
-
-    remoteListenerStarted=true;
+    remoteListenerStarted = true;
 
 
     roomRef
@@ -2206,8 +1917,8 @@ function listenRemoteButtons(){
             "value",
             snap=>{
 
-                const d=snap.val();
-
+                const d =
+                    snap.val();
 
                 if(!d)return;
 
@@ -2224,7 +1935,6 @@ function listenRemoteButtons(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2239,7 +1949,6 @@ function listenRemoteButtons(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2258,14 +1967,11 @@ function listenRemoteButtons(){
                     ){
 
                         return;
-
                     }
-
 
                     teamBuzz(1);
 
                     return;
-
                 }
 
 
@@ -2278,18 +1984,15 @@ function listenRemoteButtons(){
                     ){
 
                         return;
-
                     }
-
 
                     teamBuzz(2);
 
                     return;
-
                 }
 
 
-                const idx={
+                const idx = {
 
                     A:0,
                     B:1,
@@ -2314,7 +2017,6 @@ function listenRemoteButtons(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2330,7 +2032,6 @@ function listenRemoteButtons(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2346,7 +2047,6 @@ function listenRemoteButtons(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2408,7 +2108,6 @@ function publishQuizState(
     ){
 
         return;
-
     }
 
 
@@ -2435,15 +2134,14 @@ function publishQuizState(
                     currentTeam===1 ||
                     currentTeam===4
                 )
-                ?"player1"
+                ? "player1"
                 :
                 (
                     currentTeam===2 ||
                     currentTeam===3
                 )
-                ?"player2"
-                :
-                null,
+                ? "player2"
+                : null,
 
             correct:
                 answerResult==="correct",
@@ -2456,8 +2154,8 @@ function publishQuizState(
 
             at:
                 firebase.database
-                    .ServerValue
-                    .TIMESTAMP
+                .ServerValue
+                .TIMESTAMP
 
         })
         .catch(console.error);
@@ -2473,7 +2171,6 @@ function publishRoundStart(){
     ){
 
         return;
-
     }
 
 
@@ -2499,8 +2196,8 @@ function publishRoundStart(){
 
             at:
                 firebase.database
-                    .ServerValue
-                    .TIMESTAMP
+                .ServerValue
+                .TIMESTAMP
 
         }
 
@@ -2578,7 +2275,6 @@ document.getElementById(
         );
 
         return;
-
     }
 
 
@@ -2617,7 +2313,6 @@ function revealNextChoice(){
 
         revealedChoices++;
 
-
         const buttons =
             document.querySelectorAll(
                 ".choice"
@@ -2644,11 +2339,9 @@ function revealNextChoice(){
             null
         );
 
-
         sendScreenState();
 
         return;
-
     }
 
 
@@ -2656,12 +2349,10 @@ function revealNextChoice(){
 
         startBuzzTimer();
 
-
         publishQuizState(
             "READY",
             null
         );
-
 
         sendScreenState();
 
@@ -2680,7 +2371,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -2708,13 +2398,12 @@ function teamBuzz(team){
     ){
 
         return;
-
     }
 
 
     if(currentTeam===0){
 
-        currentTeam=team;
+        currentTeam = team;
 
         stopBuzzTimer();
 
@@ -2722,8 +2411,8 @@ function teamBuzz(team){
         publishQuizState(
             "BUZZ",
             team===1
-            ?"player1"
-            :"player2"
+            ? "player1"
+            : "player2"
         );
 
 
@@ -2741,7 +2430,7 @@ function teamBuzz(team){
             buzz1.innerText =
                 "🔵 TEAM 1 BUZZED!";
 
-            buzz2.innerText="";
+            buzz2.innerText = "";
 
 
         }else{
@@ -2758,7 +2447,7 @@ function teamBuzz(team){
             buzz2.innerText =
                 "🔴 TEAM 2 BUZZED!";
 
-            buzz1.innerText="";
+            buzz1.innerText = "";
 
         }
 
@@ -2768,7 +2457,6 @@ function teamBuzz(team){
         sendScreenState();
 
         return;
-
     }
 
 
@@ -2778,7 +2466,6 @@ function teamBuzz(team){
     ){
 
         currentTeam=2;
-
 
         team1Box.classList.add(
             "hidden-team"
@@ -2808,7 +2495,6 @@ function teamBuzz(team){
         sendScreenState();
 
         return;
-
     }
 
 
@@ -2818,7 +2504,6 @@ function teamBuzz(team){
     ){
 
         currentTeam=1;
-
 
         team2Box.classList.add(
             "hidden-team"
@@ -2882,13 +2567,13 @@ function startAnswerAfterBuzz(){
 
         currentTeam===3 ||
         currentTeam===4
-        ?"STEAL"
-        :"BUZZ",
+        ? "STEAL"
+        : "BUZZ",
 
         currentTeam===1 ||
         currentTeam===4
-        ?"player1"
-        :"player2"
+        ? "player1"
+        : "player2"
 
     );
 
@@ -2914,26 +2599,18 @@ function loadQuestion(){
         finishQuiz();
 
         return;
-
     }
 
 
     currentTeam=0;
-
     answered=false;
-
     answerAttempts=0;
-
     revealedChoices=0;
-
     lockedTeam=0;
-
     selectedAnswerIndex=-1;
-
     answerResult="";
 
     autoNextAfterBgm1=false;
-
     lastRemoteTimestamp=0;
 
 
@@ -2949,7 +2626,6 @@ function loadQuestion(){
         "hidden-team"
     );
 
-
     team2Box.classList.remove(
         "buzzer-winner",
         "hidden-team"
@@ -2957,7 +2633,6 @@ function loadQuestion(){
 
 
     buzz1.innerText="Ready";
-
     buzz2.innerText="Ready";
 
 
@@ -3018,18 +2693,17 @@ function loadQuestion(){
 
                     publishQuizState(
                         currentTeam===0
-                        ?"WAITING"
-                        :"BUZZ",
+                        ? "WAITING"
+                        : "BUZZ",
 
                         currentTeam===1 ||
                         currentTeam===4
-                        ?"player1"
+                        ? "player1"
                         :
                         currentTeam===2 ||
                         currentTeam===3
-                        ?"player2"
-                        :
-                        null
+                        ? "player2"
+                        : null
                     );
 
 
@@ -3067,7 +2741,6 @@ function loadQuestion(){
 
 
     publishRoundStart();
-
 
     sendScreenState();
 
@@ -3150,31 +2823,30 @@ function showTimer(
 
     timerElement.style.borderColor =
         mode==="buzz"
-        ?" #f1c40f"
-        :"#e67e22";
+        ? "#f1c40f"
+        : "#e67e22";
 
 
     timerElement.style.color =
         mode==="buzz"
-        ?" #f1c40f"
-        :"#e67e22";
+        ? "#f1c40f"
+        : "#e67e22";
 
 
     publishQuizState(
 
         mode==="buzz"
-        ?"READY"
-        :"BUZZ",
+        ? "READY"
+        : "BUZZ",
 
         currentTeam===1 ||
         currentTeam===4
-        ?"player1"
+        ? "player1"
         :
         currentTeam===2 ||
         currentTeam===3
-        ?"player2"
-        :
-        null
+        ? "player2"
+        : null
 
     );
 
@@ -3313,9 +2985,7 @@ function handleAnswerTimeout(){
 
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
@@ -3391,16 +3061,13 @@ function revealCorrectAnswer(){
     selectedAnswerIndex =
         q.answer;
 
-
     answerResult="correct";
 
     answered=true;
 
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
@@ -3444,11 +3111,9 @@ function prepareNextAttempt(){
             "hidden-team"
         );
 
-
         team2Box.classList.remove(
             "hidden-team"
         );
-
 
         team2Box.classList.add(
             "buzzer-winner"
@@ -3479,11 +3144,9 @@ function prepareNextAttempt(){
             "hidden-team"
         );
 
-
         team1Box.classList.remove(
             "hidden-team"
         );
-
 
         team1Box.classList.add(
             "buzzer-winner"
@@ -3528,7 +3191,6 @@ function selectAnswer(
     ){
 
         return;
-
     }
 
 
@@ -3550,8 +3212,8 @@ function selectAnswer(
 
             currentTeam===1 ||
             currentTeam===4
-            ?"player1"
-            :"player2"
+            ? "player1"
+            : "player2"
         );
 
 
@@ -3580,8 +3242,8 @@ function selectAnswer(
                 currentTeam===1 ||
                 currentTeam===4
             )
-            ?1
-            :2;
+            ? 1
+            : 2;
 
     }
 
@@ -3592,7 +3254,6 @@ function selectAnswer(
     ){
 
         return;
-
     }
 
 
@@ -3603,7 +3264,6 @@ function selectAnswer(
     ){
 
         return;
-
     }
 
 
@@ -3614,7 +3274,6 @@ function selectAnswer(
     ){
 
         return;
-
     }
 
 
@@ -3631,9 +3290,9 @@ function selectAnswer(
     selectedAnswerIndex=index;
 
 
-    /* =====================================================
-       CORRECT
-    ===================================================== */
+    /*
+     * CORRECT
+     */
 
     if(index===q.answer){
 
@@ -3643,9 +3302,7 @@ function selectAnswer(
 
 
         stopTimers();
-
         stopTimerSound();
-
         hideTimer();
 
 
@@ -3697,18 +3354,16 @@ function selectAnswer(
 
         sendScreenState();
 
-
         playCorrectBGM();
-
 
         return;
 
     }
 
 
-    /* =====================================================
-       WRONG
-    ===================================================== */
+    /*
+     * WRONG
+     */
 
     answerResult="wrong";
 
@@ -3716,7 +3371,6 @@ function selectAnswer(
     button.classList.add(
         "wrong"
     );
-
 
     button.disabled=true;
 
@@ -3729,14 +3383,11 @@ function selectAnswer(
 
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
     answerAttempts++;
-
 
     lockedTeam=answeringTeam;
 
@@ -3757,10 +3408,6 @@ function selectAnswer(
 
 /* =========================================================
    KEYBOARD ANSWERS
-   Z = A
-   X = B
-   C = C
-   V = D
 ========================================================= */
 
 document.addEventListener(
@@ -3773,7 +3420,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -3783,7 +3429,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -3810,9 +3455,9 @@ document.addEventListener(
 
         const b =
             document
-                .querySelectorAll(
-                    ".choice"
-                )[index];
+            .querySelectorAll(
+                ".choice"
+            )[index];
 
 
         if(!b)return;
@@ -3838,10 +3483,11 @@ document.addEventListener(
 
             publishQuizState(
                 "BUZZ",
+
                 currentTeam===1 ||
                 currentTeam===4
-                ?"player1"
-                :"player2"
+                ? "player1"
+                : "player2"
             );
 
 
@@ -3872,7 +3518,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -3885,7 +3530,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -3893,9 +3537,7 @@ document.addEventListener(
 
 
         stopTimers();
-
         stopTimerSound();
-
         hideTimer();
 
 
@@ -3940,7 +3582,6 @@ document.getElementById(
         );
 
         return;
-
     }
 
 
@@ -3948,9 +3589,7 @@ document.getElementById(
 
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
@@ -3965,7 +3604,6 @@ document.getElementById(
 
     await startQuizBGM();
 
-
     nextQuestion();
 
 };
@@ -3974,9 +3612,7 @@ document.getElementById(
 function nextQuestion(){
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
@@ -3986,7 +3622,6 @@ function nextQuestion(){
     ){
 
         return;
-
     }
 
 
@@ -4001,7 +3636,6 @@ function nextQuestion(){
         finishQuiz();
 
         return;
-
     }
 
 
@@ -4017,7 +3651,6 @@ function nextQuestion(){
 function finishQuiz(){
 
     stopAudio(bgm);
-
     stopAudio(bgm2);
 
 
@@ -4034,16 +3667,12 @@ function finishQuiz(){
 
 
     stopTimers();
-
     stopTimerSound();
-
     hideTimer();
 
 
     questionElement.innerText="";
-
     choicesElement.innerHTML="";
-
     progressElement.innerText="";
 
 
@@ -4083,8 +3712,8 @@ function finishQuiz(){
 
                 at:
                     firebase.database
-                        .ServerValue
-                        .TIMESTAMP
+                    .ServerValue
+                    .TIMESTAMP
 
             });
 
@@ -4119,19 +3748,17 @@ questionsFile.addEventListener(
 
         if(
             !file.name
-                .toLowerCase()
-                .endsWith(".json")
+            .toLowerCase()
+            .endsWith(".json")
         ){
 
             alert(
                 "Please upload a JSON questions file."
             );
 
-
             questionsFile.value="";
 
             return;
-
         }
 
 
@@ -4301,8 +3928,8 @@ questionsFile.addEventListener(
 
 
             /*
-                RANDOMIZE
-            */
+             * RANDOMIZE
+             */
 
             for(
                 let i=questions.length-1;
@@ -4331,17 +3958,14 @@ questionsFile.addEventListener(
             currentQuestion=0;
 
             scoreTeam1=0;
-
             scoreTeam2=0;
 
 
             score1Element.innerText="0";
-
             score2Element.innerText="0";
 
 
             saveQuestions();
-
 
             loadQuestion();
 
@@ -4494,17 +4118,13 @@ function loadSavedQuestions(){
 
         questions=parsed;
 
-
         currentQuestion=0;
 
-
         scoreTeam1=0;
-
         scoreTeam2=0;
 
 
         score1Element.innerText="0";
-
         score2Element.innerText="0";
 
 
@@ -4553,11 +4173,6 @@ roomInput.addEventListener(
             );
 
 
-        /*
-            Kapag nag-type ulit,
-            alisin ang old error.
-        */
-
         roomInput.classList.remove(
             "room-error",
             "room-ok",
@@ -4576,7 +4191,6 @@ roomInput.addEventListener(
         connectionStatus.innerText =
             "Firebase: Disconnected";
 
-
         connectionStatus.classList.remove(
             "connected"
         );
@@ -4593,7 +4207,7 @@ roomInput.addEventListener(
 
 
 /* =========================================================
-   ROOM ENTER KEY
+   ROOM ENTER
 ========================================================= */
 
 roomInput.addEventListener(
@@ -4608,6 +4222,22 @@ roomInput.addEventListener(
 
         }
 
+    }
+);
+
+
+/* =========================================================
+   PAGE EXIT
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+        /*
+         * Huwag gamitin ang async release dito.
+         * Ang Firebase onDisconnect() ang automatic
+         * na bahala sa lock kapag nawala ang connection.
+         */
     }
 );
 
