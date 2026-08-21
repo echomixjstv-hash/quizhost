@@ -314,6 +314,43 @@ html,body{
     align-items:center;
     justify-content:center;
 }
+.room-area{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.room-warning{
+    display:none;
+    position:absolute;
+    bottom:100%;
+    left:50%;
+    transform:translateX(-50%);
+    margin-bottom:5px;
+    white-space:nowrap;
+    color:#fff;
+    background:#c0392b;
+    border:1px solid #ff7675;
+    border-radius:6px;
+    padding:4px 9px;
+    font-size:12px;
+    font-weight:bold;
+    z-index:20;
+}
+
+.room-warning.show{
+    display:block;
+}
+
+#roomInput.room-error{
+    border:2px solid #e74c3c !important;
+    background:#fff5f5 !important;
+}
+
+#roomInput.room-ok{
+    border:2px solid #27ae60 !important;
+}
 </style>
 </head>
 
@@ -391,6 +428,12 @@ html,body{
 
 <div class="bottom">
 
+    <div class="room-area">
+
+    <div id="roomWarning" class="room-warning">
+        ⚠️ ROOM NOT AVAILABLE
+    </div>
+
     <input
         id="roomInput"
         class="control-btn"
@@ -399,6 +442,8 @@ html,body{
         placeholder="Room #"
         autocomplete="off"
     >
+
+</div>
 
     <button
         id="connectBtn"
@@ -895,6 +940,120 @@ firebase.initializeApp(firebaseConfig);
 const db=
     firebase.database();
 
+/* =========================================================
+   FIREBASE INTERNET CONNECTION MONITOR
+========================================================= */
+
+const firebaseConnectionRef =
+    db.ref(".info/connected");
+
+
+firebaseConnectionRef.on(
+    "value",
+    snap=>{
+
+        const connected =
+            snap.val() === true;
+
+        if(connected){
+
+            console.log(
+                "Firebase internet connection: ONLINE"
+            );
+
+            if(
+                firebaseConnected &&
+                roomRef
+            ){
+
+                checkRoomAvailability();
+
+            }
+
+        }else{
+
+            console.log(
+                "Firebase internet connection: OFFLINE"
+            );
+
+            connectionStatus.innerText =
+                "Firebase: Offline";
+
+            connectionStatus.classList.remove(
+                "connected"
+            );
+
+        }
+
+    }
+);
+
+/* =========================================================
+   CHECK IF ROOM STILL EXISTS
+========================================================= */
+
+let roomAvailabilityListener = null;
+
+
+async function checkRoomAvailability(){
+
+    if(!roomRef)return;
+
+    try{
+
+        const snap =
+            await roomRef.once("value");
+
+        const data =
+            snap.val();
+
+        /*
+            Kapag totally wala na ang room
+        */
+
+        if(data === null){
+
+            showRoomWarning();
+
+            firebaseConnected=false;
+
+            return;
+
+        }
+
+        /*
+            Room exists
+        */
+
+        hideRoomWarning();
+
+        firebaseConnected=true;
+
+        connectionStatus.innerText =
+            "Firebase: Connected • Room " +
+            roomNumber;
+
+        connectionStatus.classList.add(
+            "connected"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Room availability check:",
+            error
+        );
+
+        connectionStatus.innerText =
+            "Firebase: Connection Error";
+
+        connectionStatus.classList.remove(
+            "connected"
+        );
+
+    }
+
+}
 
 /* =========================================================
    SECOND SCREEN
@@ -1099,13 +1258,8 @@ connectBtn.onclick=async()=>{
 
     await startInitialBGM();
 
-
-    const value=
-        document
-        .getElementById("roomInput")
-        .value
-        .trim();
-
+    const value =
+        roomInput.value.trim();
 
     if(!value){
 
@@ -1117,39 +1271,53 @@ connectBtn.onclick=async()=>{
 
     }
 
-
     roomNumber=value;
 
+    saveRoomNumber();
 
-    roomRef=
+    roomRef =
         db.ref(
             "rooms/"+roomNumber
         );
 
-
     try{
 
-        const snap=
-            await roomRef
-            .child("round")
-            .once("value");
+        /*
+            CHECK ROOM FIRST
+        */
 
+        const snap =
+            await roomRef.once("value");
 
         if(
-            snap.val()===null
+            snap.val() === null
         ){
 
-            await roomRef
-            .child("round")
-            .set(1);
+            showRoomWarning();
+
+            firebaseConnected=false;
+
+            alert(
+                "Room "+roomNumber+
+                " is not available."
+            );
+
+            return;
 
         }
 
 
+        hideRoomWarning();
+
+
+        /*
+            ROOM AVAILABLE
+        */
+
         firebaseConnected=true;
 
 
-        connectionStatus.innerText=
+        connectionStatus.innerText =
             "Firebase: Connected • Room "+
             roomNumber;
 
@@ -1159,14 +1327,22 @@ connectBtn.onclick=async()=>{
             .add("connected");
 
 
-        connectBtn.innerText=
+        connectBtn.innerText =
             "✓ ROOM CONNECTED";
 
+
+        /*
+            START LISTENERS
+        */
 
         listenFirebase();
 
         listenRemoteButtons();
 
+
+        /*
+            GET REMOTE TIMESTAMP
+        */
 
         roomRef
             .child("remoteButton")
@@ -1180,8 +1356,10 @@ connectBtn.onclick=async()=>{
                     d.timestamp
                 ){
 
-                    lastRemoteTimestamp=
-                        Number(d.timestamp);
+                    lastRemoteTimestamp =
+                        Number(
+                            d.timestamp
+                        );
 
                 }
 
@@ -1194,12 +1372,66 @@ connectBtn.onclick=async()=>{
         );
 
 
+        /*
+            MONITOR ROOM CHANGES
+        */
+
+        if(roomAvailabilityListener){
+
+            roomRef.off(
+                "value",
+                roomAvailabilityListener
+            );
+
+        }
+
+
+        roomAvailabilityListener =
+            snap=>{
+
+                if(
+                    snap.val() === null
+                ){
+
+                    showRoomWarning();
+
+                    firebaseConnected=false;
+
+                }else{
+
+                    hideRoomWarning();
+
+                    firebaseConnected=true;
+
+                    connectionStatus.innerText =
+                        "Firebase: Connected • Room "+
+                        roomNumber;
+
+                    connectionStatus.classList.add(
+                        "connected"
+                    );
+
+                }
+
+            };
+
+
+        roomRef.on(
+            "value",
+            roomAvailabilityListener
+        );
+
+
     }catch(e){
 
         console.error(e);
 
+        showRoomWarning();
+
+        firebaseConnected=false;
+
         alert(
-            "Firebase connection error. Check Realtime Database Rules."
+            "Firebase connection error."
         );
 
     }
@@ -3296,6 +3528,8 @@ questionsFile.addEventListener(
             */
 
             loadQuestion();
+            
+            saveQuestions();
 
 
             alert(
@@ -3325,23 +3559,276 @@ questionsFile.addEventListener(
 
     }
 );
-
 /* =========================================================
-   START
+   PERSISTENT STORAGE
 ========================================================= */
 
-questions=[];
+const STORAGE_KEYS = {
+    ROOM: "teamQuiz_savedRoom",
+    QUESTIONS: "teamQuiz_savedQuestions"
+};
 
-questionElement.innerText=
-    "UPLOAD QUESTIONS TO START";
+const roomInput =
+    document.getElementById("roomInput");
 
-progressElement.innerText=
-    "No questions loaded";
+const roomWarning =
+    document.getElementById("roomWarning");
 
-choicesElement.innerHTML="";
 
-messageElement.innerText=
-    "📂 Click UPLOAD QUESTIONS";
+/* =========================================================
+   ROOM WARNING
+========================================================= */
+
+function showRoomWarning(){
+
+    roomWarning.classList.add("show");
+
+    roomInput.classList.add("room-error");
+    roomInput.classList.remove("room-ok");
+
+    connectionStatus.innerText =
+        "Firebase: Room Not Available";
+
+    connectionStatus.classList.remove(
+        "connected"
+    );
+
+}
+
+
+function hideRoomWarning(){
+
+    roomWarning.classList.remove("show");
+
+    roomInput.classList.remove("room-error");
+    roomInput.classList.add("room-ok");
+
+}
+
+
+/* =========================================================
+   SAVE ROOM
+========================================================= */
+
+function saveRoomNumber(){
+
+    const room =
+        roomInput.value.trim();
+
+    if(!room)return;
+
+    localStorage.setItem(
+        STORAGE_KEYS.ROOM,
+        room
+    );
+
+}
+
+
+/* =========================================================
+   LOAD SAVED ROOM
+========================================================= */
+
+function loadSavedRoom(){
+
+    const savedRoom =
+        localStorage.getItem(
+            STORAGE_KEYS.ROOM
+        );
+
+    if(savedRoom){
+
+        roomInput.value =
+            savedRoom;
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE QUESTIONS
+========================================================= */
+
+function saveQuestions(){
+
+    if(!questions.length)return;
+
+    try{
+
+        localStorage.setItem(
+            STORAGE_KEYS.QUESTIONS,
+            JSON.stringify(questions)
+        );
+
+        console.log(
+            "Questions saved locally:",
+            questions.length
+        );
+
+    }catch(error){
+
+        console.error(
+            "Failed to save questions:",
+            error
+        );
+
+        alert(
+            "Hindi ma-save ang questions sa browser. " +
+            "Baka masyadong malaki ang JSON file."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD SAVED QUESTIONS
+========================================================= */
+
+function loadSavedQuestions(){
+
+    try{
+
+        const saved =
+            localStorage.getItem(
+                STORAGE_KEYS.QUESTIONS
+            );
+
+        if(!saved)return false;
+
+        const parsed =
+            JSON.parse(saved);
+
+        if(
+            !Array.isArray(parsed) ||
+            !parsed.length
+        ){
+            return false;
+        }
+
+        questions =
+            parsed;
+
+        currentQuestion=0;
+
+        scoreTeam1=0;
+        scoreTeam2=0;
+
+        score1Element.innerText="0";
+        score2Element.innerText="0";
+
+        loadQuestion();
+
+        messageElement.innerText =
+            `💾 ${questions.length} saved questions loaded`;
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "Saved questions error:",
+            error
+        );
+
+        localStorage.removeItem(
+            STORAGE_KEYS.QUESTIONS
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   ROOM INPUT AUTO SAVE
+========================================================= */
+
+roomInput.addEventListener(
+    "input",
+    ()=>{
+
+        roomInput.value =
+            roomInput.value.replace(
+                /[^0-9]/g,
+                ""
+            );
+
+        saveRoomNumber();
+
+    }
+);
+
+/* =========================================================
+   RESTORE SAVED SESSION
+========================================================= */
+
+loadSavedRoom();
+
+const restored =
+    loadSavedQuestions();
+
+
+if(restored){
+
+    messageElement.innerText =
+        `💾 ${questions.length} saved questions restored`;
+
+}else{
+
+    questionElement.innerText =
+        "UPLOAD QUESTIONS TO START";
+
+    progressElement.innerText =
+        "No questions loaded";
+
+    choicesElement.innerHTML="";
+
+    messageElement.innerText =
+        "📂 Click UPLOAD QUESTIONS";
+
+}
+
+
+/* =========================================================
+   AUTO CONNECT SAVED ROOM
+========================================================= */
+
+window.addEventListener(
+    "load",
+    ()=>{
+
+        const savedRoom =
+            localStorage.getItem(
+                STORAGE_KEYS.ROOM
+            );
+
+        if(!savedRoom)return;
+
+        roomInput.value =
+            savedRoom;
+
+
+        /*
+            Konting delay para siguradong
+            initialized na ang Firebase.
+        */
+
+        setTimeout(
+            ()=>{
+
+                connectBtn.click();
+
+            },
+            700
+        );
+
+    }
+);
 </script>
 
 </body>
