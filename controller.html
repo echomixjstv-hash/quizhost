@@ -1,319 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1.0"
->
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
 
-<title>Questions Generator</title>
+<title>Quiz Controller</title>
 
 <style>
 
 *{
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
     margin:0;
-    min-height:100%;
+    width:100%;
+    height:100%;
+    overflow:hidden;
     font-family:Arial,sans-serif;
     background:#101010;
-    color:#fff;
+    color:white;
 }
 
 body{
-    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-.container{
+.app{
     width:100%;
-    max-width:1000px;
-    margin:auto;
+    max-width:600px;
+    height:100vh;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
 }
+
+
+/* ================================
+   HEADER
+================================ */
 
 .header{
     text-align:center;
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
 .header h1{
     margin:0;
-    font-size:32px;
+    font-size:30px;
 }
 
-.header p{
-    color:#aaa;
+.status{
+    display:inline-block;
     margin-top:8px;
-}
-
-/* SUBJECT */
-
-.subject-card{
-    background:#1d1d1d;
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:20px;
-    border:1px solid #333;
-}
-
-.subject-title{
-    display:block;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-#subjectInput{
-    width:100%;
-    border:0;
-    outline:none;
-    border-radius:10px;
-    padding:14px;
-    font-size:18px;
-    background:#fff;
-    color:#111;
-}
-
-/* CARD */
-
-.card{
-    background:#1d1d1d;
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:20px;
-    border:1px solid #333;
-}
-
-label.title{
-    display:block;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-input[type="text"],
-textarea{
-    width:100%;
-    border:0;
-    outline:none;
-    border-radius:10px;
-    padding:14px;
-    font-size:17px;
-    background:#fff;
-    color:#111;
-}
-
-textarea{
-    min-height:100px;
-    resize:vertical;
-}
-
-/* CHOICES */
-
-.choices{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:15px;
-}
-
-.choice{
-    background:#292929;
-    border-radius:12px;
-    padding:12px;
-    border:2px solid #444;
-}
-
-.choice-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.choice-row input[type="text"]{
-    flex:1;
-}
-
-.answer-check{
-    width:24px;
-    height:24px;
-    cursor:pointer;
-}
-
-.answer-label{
+    padding:7px 15px;
+    border-radius:20px;
+    background:#555;
     font-size:13px;
-    color:#aaa;
-    margin-top:7px;
+}
+
+.status.ok{
+    background:#159447;
+}
+
+.status.error{
+    background:#c0392b;
+}
+
+
+/* ================================
+   ROOM
+================================ */
+
+.room-section{
+    background:#1d1d1d;
+    border-radius:18px;
+    padding:18px;
+    border:2px solid #333;
+}
+
+.room-title{
     text-align:center;
-}
-
-/* BUTTONS */
-
-.buttons{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-top:20px;
-}
-
-button{
-    border:0;
-    border-radius:10px;
-    padding:13px 20px;
     font-size:16px;
     font-weight:bold;
-    cursor:pointer;
-}
-
-.add-btn{
-    background:#3498db;
-    color:#fff;
-}
-
-.generate-btn{
-    background:#27ae60;
-    color:#fff;
-}
-
-.download-btn{
-    background:#f39c12;
-    color:#fff;
-}
-
-.clear-btn{
-    background:#e74c3c;
-    color:#fff;
-}
-
-.import-btn{
-    background:#8e44ad;
-    color:#fff;
-}
-
-button:hover{
-    opacity:.85;
-}
-
-/* QUESTION LIST */
-
-.question-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.question-item{
-    background:#292929;
-    border-radius:10px;
-    padding:15px;
-    border-left:5px solid #3498db;
-}
-
-.question-item strong{
-    display:block;
-    margin-bottom:8px;
-}
-
-.question-item ol{
-    margin:5px 0 0 20px;
-    padding:0;
-    color:#ccc;
-}
-
-.question-item li.correct{
-    color:#2ecc71;
-    font-weight:bold;
-}
-
-.remove-btn{
-    margin-top:10px;
-    padding:7px 12px;
-    font-size:13px;
-    background:#c0392b;
-    color:#fff;
-}
-
-/* JSON */
-
-#jsonOutput{
-    width:100%;
-    min-height:300px;
-    font-family:Consolas,monospace;
-    font-size:14px;
-    background:#080808;
-    color:#00ff88;
-    border:1px solid #444;
-}
-
-/* PASTE */
-
-#pasteInput{
-    width:100%;
-    min-height:350px;
-    font-family:Consolas,monospace;
-    font-size:14px;
-    background:#080808;
-    color:#00ff88;
-    border:1px solid #444;
-    resize:vertical;
-}
-
-.paste-help{
-    color:#aaa;
-    font-size:14px;
-    line-height:1.5;
-    margin-bottom:12px;
-}
-
-.paste-example{
-    color:#777;
-    font-size:13px;
-    margin-top:10px;
-}
-
-/* COUNTER */
-
-.counter{
-    text-align:right;
-    color:#aaa;
     margin-bottom:10px;
 }
 
-/* STATUS */
-
-.status{
-    margin-top:12px;
-    min-height:25px;
-    font-weight:bold;
+.room-row{
+    display:flex;
+    gap:8px;
 }
 
-.success{
+#roomInput{
+    flex:1;
+    min-width:0;
+    border:0;
+    border-radius:10px;
+    padding:14px;
+    font-size:20px;
+    text-align:center;
+    outline:none;
+}
+
+#connectBtn{
+    border:0;
+    border-radius:10px;
+    padding:0 18px;
+    background:#3498db;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#connectBtn:active{
+    transform:scale(.97);
+}
+
+#connectBtn:disabled{
+    opacity:.5;
+}
+
+
+/* ================================
+   PLAYER SELECT
+================================ */
+
+.player-section{
+    margin-top:15px;
+    display:none;
+}
+
+.section-title{
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.players{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.player-btn{
+    min-height:120px;
+    border:4px solid;
+    border-radius:18px;
+    background:#202020;
+    color:white;
+    cursor:pointer;
+    font-size:25px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.player-btn:active{
+    transform:scale(.96);
+}
+
+.player1{
+    border-color:#3498db;
+}
+
+.player2{
+    border-color:#e74c3c;
+}
+
+.player-btn.unavailable{
+    opacity:.15;
+    transform:scale(.95);
+    pointer-events:none;
+}
+
+.player-btn.selected{
+    box-shadow:
+        0 0 12px currentColor,
+        0 0 30px currentColor;
+    background:#333;
+}
+
+.player-name{
+    display:block;
+    font-size:25px;
+}
+
+.player-status{
+    display:block;
+    margin-top:8px;
+    font-size:13px;
+    font-weight:normal;
+}
+
+
+/* ================================
+   CONTROLLER
+================================ */
+
+.controller{
+    flex:1;
+    min-height:0;
+    margin-top:15px;
+    display:none;
+    flex-direction:column;
+}
+
+.selected-player{
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.choice-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.choice-btn{
+    height:75px;
+    border:0;
+    border-radius:14px;
+    background:#303030;
+    color:white;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.12s;
+}
+
+.choice-btn:active{
+    transform:scale(.94);
+    background:#555;
+}
+
+.choice-btn.active{
+    background:#3498db;
+}
+
+
+/* ================================
+   BUZZER
+================================ */
+
+.buzz-area{
+    flex:1;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding:15px 0;
+}
+
+#buzzBtn{
+    width:100%;
+    height:100%;
+    max-height:300px;
+    border:0;
+    border-radius:30px;
+    background:#c0392b;
+    color:white;
+    font-size:60px;
+    font-weight:900;
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 0 #7f1d1d,
+        0 15px 30px rgba(0,0,0,.5);
+
+    transition:.08s;
+}
+
+#buzzBtn:active{
+    transform:translateY(8px);
+
+    box-shadow:
+        0 0 0 #7f1d1d,
+        0 8px 20px rgba(0,0,0,.5);
+}
+
+#buzzBtn.sent{
+    background:#27ae60;
+}
+
+
+/* ================================
+   SENSOR STATUS
+================================ */
+
+.sensor-status{
+    text-align:center;
+    font-size:13px;
+    font-weight:bold;
+    margin-top:5px;
+    min-height:18px;
+}
+
+.sensor-status.ready{
     color:#2ecc71;
 }
 
-.error{
+.sensor-status.warning{
+    color:#f1c40f;
+}
+
+.sensor-status.error{
     color:#e74c3c;
 }
 
-/* MOBILE */
 
-@media(max-width:700px){
+/* ================================
+   MESSAGE
+================================ */
 
-    body{
+.message{
+    min-height:25px;
+    text-align:center;
+    font-size:15px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.hidden{
+    display:none!important;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width:450px){
+
+    .app{
         padding:10px;
     }
 
-    .choices{
-        grid-template-columns:1fr;
+    .header h1{
+        font-size:24px;
     }
 
-    .header h1{
+    .player-btn{
+        min-height:100px;
+        font-size:21px;
+    }
+
+    .choice-btn{
+        height:65px;
         font-size:25px;
+    }
+
+    #buzzBtn{
+        font-size:45px;
+        border-radius:25px;
     }
 
 }
@@ -326,241 +372,190 @@ button:hover{
 <body>
 
 
-<div class="container">
+<div class="app">
 
 
-<!-- HEADER -->
+    <!-- HEADER -->
 
-<div class="header">
+    <div class="header">
 
-    <h1>📝 QUESTIONS GENERATOR</h1>
+        <h1>
+            🎮 QUIZ CONTROLLER
+        </h1>
 
-    <p>
-        Create questions and export them as JSON
-    </p>
+        <div id="status"
+             class="status">
 
-</div>
-
-
-<!-- SUBJECT -->
-
-<div class="subject-card">
-
-    <label class="subject-title">
-        📚 INPUT SUBJECT / FILE NAME
-    </label>
-
-    <input
-        type="text"
-        id="subjectInput"
-        placeholder="Example: SCIENCE"
-        autocomplete="off"
-    >
-
-    <div
-        style="
-            color:#888;
-            margin-top:8px;
-            font-size:13px;
-        "
-    >
-    </div>
-
-</div>
-
-
-<!-- QUESTION FORM -->
-
-<div class="card">
-
-    <label class="title">
-        QUESTION
-    </label>
-
-    <textarea
-        id="questionInput"
-        placeholder="Enter question here..."
-    ></textarea>
-
-
-    <div style="margin-top:20px">
-
-        <label class="title">
-            CHOICES
-        </label>
-
-    </div>
-
-
-    <div class="choices">
-
-
-        <!-- A -->
-
-        <div class="choice">
-
-            <div class="choice-row">
-
-                <input
-                    type="text"
-                    id="choice0"
-                    placeholder="Choice A"
-                >
-
-                <input
-                    type="checkbox"
-                    class="answer-check"
-                    data-index="0"
-                    title="Correct answer"
-                >
-
-            </div>
-
-            <div class="answer-label">
-                ☑ Check if correct answer
-            </div>
-
-        </div>
-
-
-        <!-- B -->
-
-        <div class="choice">
-
-            <div class="choice-row">
-
-                <input
-                    type="text"
-                    id="choice1"
-                    placeholder="Choice B"
-                >
-
-                <input
-                    type="checkbox"
-                    class="answer-check"
-                    data-index="1"
-                    title="Correct answer"
-                >
-
-            </div>
-
-            <div class="answer-label">
-                ☑ Check if correct answer
-            </div>
-
-        </div>
-
-
-        <!-- C -->
-
-        <div class="choice">
-
-            <div class="choice-row">
-
-                <input
-                    type="text"
-                    id="choice2"
-                    placeholder="Choice C"
-                >
-
-                <input
-                    type="checkbox"
-                    class="answer-check"
-                    data-index="2"
-                    title="Correct answer"
-                >
-
-            </div>
-
-            <div class="answer-label">
-                ☑ Check if correct answer
-            </div>
-
-        </div>
-
-
-        <!-- D -->
-
-        <div class="choice">
-
-            <div class="choice-row">
-
-                <input
-                    type="text"
-                    id="choice3"
-                    placeholder="Choice D"
-                >
-
-                <input
-                    type="checkbox"
-                    class="answer-check"
-                    data-index="3"
-                    title="Correct answer"
-                >
-
-            </div>
-
-            <div class="answer-label">
-                ☑ Check if correct answer
-            </div>
+            Enter Room Number
 
         </div>
 
     </div>
 
 
-    <div
-        id="status"
-        class="status"
-    ></div>
+    <!-- ROOM -->
 
+    <div id="roomSection"
+         class="room-section">
 
-    <div class="buttons">
+        <div class="room-title">
+            ENTER ROOM NUMBER
+        </div>
 
-        <button
-            class="add-btn"
-            onclick="addQuestion()"
-        >
-            ➕ ADD QUESTION
-        </button>
+        <div class="room-row">
 
-        <button
-            class="clear-btn"
-            onclick="clearForm()"
-        >
-            🗑️ CLEAR FORM
-        </button>
+            <input
+                id="roomInput"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="ROOM NUMBER">
 
-    </div>
+            <button id="connectBtn">
+                CONNECT
+            </button>
 
-</div>
-
-
-<!-- QUESTION LIST -->
-
-<div class="card">
-
-    <div class="counter">
-
-        Questions:
-        <span id="questionCount">0</span>
+        </div>
 
     </div>
 
 
-    <div
-        id="questionList"
-        class="question-list"
-    >
+    <!-- PLAYER -->
+
+    <div id="playerSection"
+         class="player-section">
+
+        <div class="section-title">
+            SELECT PLAYER
+        </div>
+
+        <div class="players">
+
+
+            <button
+                id="player1Btn"
+                class="player-btn player1">
+
+                <span class="player-name">
+                    🔵 PLAYER 1
+                </span>
+
+                <span
+                    id="player1Status"
+                    class="player-status">
+
+                    Available
+
+                </span>
+
+            </button>
+
+
+            <button
+                id="player2Btn"
+                class="player-btn player2">
+
+                <span class="player-name">
+                    🔴 PLAYER 2
+                </span>
+
+                <span
+                    id="player2Status"
+                    class="player-status">
+
+                    Available
+
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTROLLER -->
+
+    <div id="controller"
+         class="controller">
+
 
         <div
-            style="
-                text-align:center;
-                color:#777;
-                padding:20px;
-            "
-        >
-            No questions added yet.
+            id="selectedPlayer"
+            class="selected-player">
+        </div>
+
+
+        <!-- ABCD -->
+
+        <div class="choice-grid">
+
+
+            <button
+                class="choice-btn"
+                data-choice="A">
+
+                A
+
+            </button>
+
+
+            <button
+                class="choice-btn"
+                data-choice="B">
+
+                B
+
+            </button>
+
+
+            <button
+                class="choice-btn"
+                data-choice="C">
+
+                C
+
+            </button>
+
+
+            <button
+                class="choice-btn"
+                data-choice="D">
+
+                D
+
+            </button>
+
+        </div>
+
+
+        <!-- BUZZ -->
+
+        <div class="buzz-area">
+
+            <button id="buzzBtn">
+
+                BUZZ
+
+            </button>
+
+        </div>
+
+
+        <!-- SENSOR -->
+
+        <div
+            id="sensorStatus"
+            class="sensor-status">
+
+            Photosensor: Starting...
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message">
         </div>
 
     </div>
@@ -568,903 +563,1319 @@ button:hover{
 </div>
 
 
-<!-- GENERATE -->
 
-<div class="card">
+<!-- FIREBASE -->
 
-    <div class="buttons">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 
-        <button
-            class="generate-btn"
-            onclick="generateJSON()"
-        >
-            ⚙️ GENERATE
-        </button>
-
-        <button
-            class="download-btn"
-            onclick="downloadJSON()"
-        >
-            💾 DOWNLOAD GENERATED QUESTIONS
-        </button>
-
-        <a href="https://echomixjstv-hash.github.io/quizhost" style="
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:10px 20px;
-    background:#3498db;
-    color:white;
-    text-decoration:none;
-    border-radius:8px;
-    font-weight:bold;
-">
-    🏠 HOST QUIZ
-</a>
-
-    </div>
-
-</div>
-
-
-<!-- JSON OUTPUT -->
-
-<div class="card">
-
-    <label class="title">
-        GENERATED JSON
-    </label>
-
-    <textarea
-        id="jsonOutput"
-        readonly
-        placeholder="Generated JSON will appear here..."
-    ></textarea>
-
-</div>
-
-
-<!-- PASTE -->
-
-<div class="card">
-
-    <label class="title">
-        📋 PASTE QUIZ
-    </label>
-
-    <div class="paste-help">
-
-        Maaari kang mag-paste ng buong code dito.
-        Pagkatapos ay pindutin ang
-        <b>IMPORT QUESTIONS</b>.
-
-    </div>
-
-
-    <textarea
-        id="pasteInput"
-        placeholder='Paste code here...
-
-Example:
-
-[
-  {
-    "question": "What is the capital of the Philippines?",
-    "choices": [
-      "Manila",
-      "Cebu",
-      "Davao",
-      "Baguio"
-    ],
-    "answer": 0
-  }
-]'
-    ></textarea>
-
-
-    <div class="buttons">
-
-        <button
-            class="import-btn"
-            onclick="importPastedQuestions()"
-        >
-            📥 IMPORT QUESTIONS
-        </button>
-
-        <button
-            class="clear-btn"
-            onclick="clearPaste()"
-        >
-            🗑️ CLEAR PASTE
-        </button>
-
-    </div>
-
-
-    <div class="paste-example">
-
-        Required format:
-        <b>question</b>,
-        <b>choices</b> = 4,
-        <b>answer</b> = 0-3
-
-    </div>
-
-</div>
-
-
-</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 
 <script>
 
-/* =====================================================
-   DATA
-===================================================== */
 
-let questions = [];
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyAKzNpDBeiT-eymm0e1l_U3p_dggPrbEk",
+
+    authDomain:
+        "jess-santi.firebaseapp.com",
+
+    databaseURL:
+        "https://jess-santi-default-rtdb.firebaseio.com/",
+
+    projectId:
+        "jess-santi",
+
+    storageBucket:
+        "jess-santi.firebasestorage.app",
+
+    messagingSenderId:
+        "457562056307",
+
+    appId:
+        "1:457562056307:web:1be6c76bc8bdb5bd0aac06",
+
+    measurementId:
+        "G-SKL83F1C8B"
+
+};
 
 
-/* =====================================================
+firebase.initializeApp(
+    firebaseConfig
+);
+
+
+const db =
+    firebase.database();
+
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let roomNumber = "";
+
+let roomRef = null;
+
+let selectedPlayer = "";
+
+let connected = false;
+
+let playerListener = null;
+
+let stateListener = null;
+
+let presenceRef = null;
+
+
+/* =========================================================
+   PHOTOSENSOR VARIABLES
+========================================================= */
+
+let lightSensor = null;
+
+let lightSensorStarted = false;
+
+let lightBuzzReady = true;
+
+let lastLightValue = null;
+
+
+/*
+   Kapag ang reading ay mas mababa
+   o equal dito, ituturing na
+   natakpan ang sensor.
+*/
+
+const LIGHT_THRESHOLD = 15;
+
+
+/*
+   Kailangang umabot ulit dito
+   bago maging ready ulit.
+
+   Ginagawa ito para hindi paulit-ulit
+   ang BUZZ habang nakatakip.
+*/
+
+const LIGHT_RESET = 30;
+
+
+/*
+   Minimum delay sa pagitan
+   ng automatic buzz.
+*/
+
+const LIGHT_BUZZ_COOLDOWN = 1200;
+
+let lastLightBuzzTime = 0;
+
+
+
+/* =========================================================
    ELEMENTS
-===================================================== */
+========================================================= */
 
-const questionInput =
-    document.getElementById("questionInput");
+const roomInput =
+    document.getElementById(
+        "roomInput"
+    );
 
-const questionCount =
-    document.getElementById("questionCount");
 
-const questionList =
-    document.getElementById("questionList");
+const connectBtn =
+    document.getElementById(
+        "connectBtn"
+    );
 
-const jsonOutput =
-    document.getElementById("jsonOutput");
 
 const status =
-    document.getElementById("status");
-
-const pasteInput =
-    document.getElementById("pasteInput");
-
-
-/* =====================================================
-   CHECKBOX
-   ONLY ONE ANSWER
-===================================================== */
-
-document
-.querySelectorAll(".answer-check")
-.forEach(check => {
-
-    check.addEventListener("change", function(){
-
-        if(this.checked){
-
-            document
-            .querySelectorAll(".answer-check")
-            .forEach(other => {
-
-                if(other !== this){
-
-                    other.checked = false;
-
-                }
-
-            });
-
-        }
-
-    });
-
-});
-
-
-/* =====================================================
-   ADD QUESTION
-===================================================== */
-
-function addQuestion(){
-
-    status.innerText = "";
-    status.className = "status";
-
-
-    const question =
-        questionInput.value.trim();
-
-
-    const choices = [
-
-        document
-        .getElementById("choice0")
-        .value
-        .trim(),
-
-        document
-        .getElementById("choice1")
-        .value
-        .trim(),
-
-        document
-        .getElementById("choice2")
-        .value
-        .trim(),
-
-        document
-        .getElementById("choice3")
-        .value
-        .trim()
-
-    ];
-
-
-    const checks =
-        document.querySelectorAll(".answer-check");
-
-
-    let answer = -1;
-
-
-    checks.forEach((check,index) => {
-
-        if(check.checked){
-
-            answer = index;
-
-        }
-
-    });
-
-
-    /* VALIDATE QUESTION */
-
-    if(!question){
-
-        showError(
-            "❌ Please enter a question."
-        );
-
-        questionInput.focus();
-
-        return;
-
-    }
-
-
-    /* VALIDATE CHOICES */
-
-    for(let i=0;i<4;i++){
-
-        if(!choices[i]){
-
-            showError(
-                "❌ Please enter Choice " +
-                String.fromCharCode(65+i) +
-                "."
-            );
-
-            document
-            .getElementById("choice"+i)
-            .focus();
-
-            return;
-
-        }
-
-    }
-
-
-    /* VALIDATE ANSWER */
-
-    if(answer === -1){
-
-        showError(
-            "❌ Please check the correct answer."
-        );
-
-        return;
-
-    }
-
-
-    /* ADD */
-
-    questions.push({
-
-        question: question,
-
-        choices: choices,
-
-        answer: answer
-
-    });
-
-
-    renderQuestions();
-
-    generateJSON(false);
-
-    clearForm();
-
-
-    showSuccess(
-        "✅ Question added successfully!"
+    document.getElementById(
+        "status"
     );
 
-}
 
-
-/* =====================================================
-   RENDER
-===================================================== */
-
-function renderQuestions(){
-
-    questionCount.innerText =
-        questions.length;
-
-
-    if(!questions.length){
-
-        questionList.innerHTML = `
-
-            <div
-                style="
-                    text-align:center;
-                    color:#777;
-                    padding:20px;
-                "
-            >
-                No questions added yet.
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    questionList.innerHTML = "";
-
-
-    questions.forEach((q,index) => {
-
-        const item =
-            document.createElement("div");
-
-
-        item.className =
-            "question-item";
-
-
-        let choicesHTML = "";
-
-
-        q.choices.forEach((choice,i) => {
-
-            const letter =
-                String.fromCharCode(65+i);
-
-
-            const correct =
-                i === q.answer;
-
-
-            choicesHTML += `
-
-                <li class="${correct ? "correct" : ""}">
-
-                    ${letter}. ${escapeHTML(choice)}
-
-                    ${correct ? " ✅" : ""}
-
-                </li>
-
-            `;
-
-        });
-
-
-        item.innerHTML = `
-
-            <strong>
-                ${index+1}. ${escapeHTML(q.question)}
-            </strong>
-
-            <ol>
-                ${choicesHTML}
-            </ol>
-
-            <button
-                class="remove-btn"
-                onclick="removeQuestion(${index})"
-            >
-                🗑️ REMOVE
-            </button>
-
-        `;
-
-
-        questionList.appendChild(item);
-
-    });
-
-}
-
-
-/* =====================================================
-   REMOVE
-===================================================== */
-
-function removeQuestion(index){
-
-    questions.splice(index,1);
-
-    renderQuestions();
-
-
-    if(questions.length){
-
-        generateJSON(false);
-
-    }
-    else{
-
-        jsonOutput.value = "";
-
-    }
-
-}
-
-
-/* =====================================================
-   CLEAR FORM
-===================================================== */
-
-function clearForm(){
-
-    questionInput.value = "";
-
-
-    for(let i=0;i<4;i++){
-
-        document
-        .getElementById("choice"+i)
-        .value = "";
-
-    }
-
-
-    document
-    .querySelectorAll(".answer-check")
-    .forEach(check => {
-
-        check.checked = false;
-
-    });
-
-}
-
-
-/* =====================================================
-   GENERATE JSON
-===================================================== */
-
-function generateJSON(showMessage=true){
-
-    if(!questions.length){
-
-        if(showMessage){
-
-            showError(
-                "❌ Add at least one question first."
-            );
-
-        }
-
-        return "";
-
-    }
-
-
-    const json =
-        JSON.stringify(
-            questions,
-            null,
-            2
-        );
-
-
-    jsonOutput.value = json;
-
-
-    if(showMessage){
-
-        showSuccess(
-            "✅ " +
-            questions.length +
-            " question(s) generated."
-        );
-
-    }
-
-
-    return json;
-
-}
-
-
-/* =====================================================
-   GET FILE NAME
-===================================================== */
-
-function getSubject(){
-
-    let subject =
-        document
-        .getElementById("subjectInput")
-        .value
-        .trim();
-
-
-    if(!subject){
-
-        return "questions";
-
-    }
-
-
-    /* Remove Windows-invalid characters */
-
-    subject =
-        subject.replace(
-            /[<>:"/\\|?*]/g,
-            ""
-        );
-
-
-    /* Replace spaces */
-
-    subject =
-        subject.replace(
-            /\s+/g,
-            "_"
-        );
-
-
-    return subject || "questions";
-
-}
-
-
-/* =====================================================
-   DOWNLOAD JSON
-===================================================== */
-
-function downloadJSON(){
-
-    if(!questions.length){
-
-        showError(
-            "❌ Add at least one question first."
-        );
-
-        return;
-
-    }
-
-
-    const json =
-        JSON.stringify(
-            questions,
-            null,
-            2
-        );
-
-
-    jsonOutput.value = json;
-
-
-    const blob =
-        new Blob(
-            [json],
-            {
-                type:"application/json"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(blob);
-
-
-    const a =
-        document.createElement("a");
-
-
-    const filename =
-        getSubject() + ".json";
-
-
-    a.href = url;
-
-    a.download = filename;
-
-    a.style.display = "none";
-
-
-    document.body.appendChild(a);
-
-
-    a.click();
-
-
-    document.body.removeChild(a);
-
-
-    /* Give browser time before revoke */
-
-    setTimeout(() => {
-
-        URL.revokeObjectURL(url);
-
-    },1000);
-
-
-    showSuccess(
-        "✅ " + filename + " downloaded!"
+const roomSection =
+    document.getElementById(
+        "roomSection"
     );
 
+
+const playerSection =
+    document.getElementById(
+        "playerSection"
+    );
+
+
+const controller =
+    document.getElementById(
+        "controller"
+    );
+
+
+const player1Btn =
+    document.getElementById(
+        "player1Btn"
+    );
+
+
+const player2Btn =
+    document.getElementById(
+        "player2Btn"
+    );
+
+
+const player1Status =
+    document.getElementById(
+        "player1Status"
+    );
+
+
+const player2Status =
+    document.getElementById(
+        "player2Status"
+    );
+
+
+const selectedPlayerText =
+    document.getElementById(
+        "selectedPlayer"
+    );
+
+
+const buzzBtn =
+    document.getElementById(
+        "buzzBtn"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const sensorStatus =
+    document.getElementById(
+        "sensorStatus"
+    );
+
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(
+    text,
+    type=""
+){
+
+    status.innerText =
+        text;
+
+
+    status.classList.remove(
+        "ok",
+        "error"
+    );
+
+
+    if(type)
+        status.classList.add(
+            type
+        );
+
 }
 
 
-/* =====================================================
-   IMPORT PASTED JSON
-===================================================== */
 
-function importPastedQuestions(){
+/* =========================================================
+   CONNECT ROOM
+========================================================= */
 
-    const text =
-        pasteInput.value.trim();
+connectBtn.onclick =
+async function(){
+
+    const room =
+        roomInput.value.trim();
 
 
-    if(!text){
+    if(!room){
 
-        showError(
-            "❌ Please paste JSON first."
+        setStatus(
+            "Enter Room Number",
+            "error"
         );
-
-        pasteInput.focus();
 
         return;
 
     }
 
 
-    let parsed;
+    connectBtn.disabled =
+        true;
+
+
+    setStatus(
+        "Checking Room..."
+    );
 
 
     try{
 
-        parsed =
-            JSON.parse(text);
-
-    }
-    catch(error){
-
-        showError(
-            "❌ Invalid JSON format."
-        );
-
-        return;
-
-    }
-
-
-    if(!Array.isArray(parsed)){
-
-        showError(
-            "❌ JSON must be an array."
-        );
-
-        return;
-
-    }
-
-
-    /* Validate every question */
-
-    for(
-        let i=0;
-        i<parsed.length;
-        i++
-    ){
-
-        const q = parsed[i];
-
-
-        if(
-            !q ||
-            typeof q.question !== "string" ||
-            !q.question.trim() ||
-            !Array.isArray(q.choices) ||
-            q.choices.length !== 4 ||
-            !Number.isInteger(q.answer) ||
-            q.answer < 0 ||
-            q.answer > 3
-        ){
-
-            showError(
-                "❌ Invalid question format at item " +
-                (i+1) +
-                "."
+        const ref =
+            db.ref(
+                "rooms/"+room
             );
+
+
+        const snap =
+            await ref.once(
+                "value"
+            );
+
+
+        if(!snap.exists()){
+
+            setStatus(
+                "❌ Room Not Found",
+                "error"
+            );
+
+            connectBtn.disabled =
+                false;
 
             return;
 
         }
 
 
-        for(let c=0;c<4;c++){
+        roomNumber =
+            room;
 
-            if(
-                typeof q.choices[c] !== "string" ||
-                !q.choices[c].trim()
-            ){
+        roomRef =
+            ref;
 
-                showError(
-                    "❌ Invalid Choice " +
-                    String.fromCharCode(65+c) +
-                    " at question " +
-                    (i+1) +
-                    "."
+        connected =
+            true;
+
+
+        setStatus(
+            "✓ ROOM: "+room,
+            "ok"
+        );
+
+
+        roomInput.disabled =
+            true;
+
+
+        connectBtn.innerText =
+            "CONNECTED";
+
+
+        roomSection.style.display =
+            "none";
+
+
+        playerSection.style.display =
+            "block";
+
+
+        listenPlayers();
+
+        listenQuizState();
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        setStatus(
+            "❌ Connection Error",
+            "error"
+        );
+
+
+        connectBtn.disabled =
+            false;
+
+    }
+
+};
+
+
+
+/* =========================================================
+   PLAYER AVAILABILITY
+========================================================= */
+
+function listenPlayers(){
+
+    if(!roomRef)
+        return;
+
+
+    if(playerListener){
+
+        roomRef
+        .child("controllers")
+        .off(
+            "value",
+            playerListener
+        );
+
+    }
+
+
+    playerListener =
+    function(snap){
+
+        const data =
+            snap.val() || {};
+
+
+        const player1 =
+            data.player1;
+
+
+        const player2 =
+            data.player2;
+
+
+        updatePlayerButton(
+            player1Btn,
+            player1Status,
+            player1,
+            "player1"
+        );
+
+
+        updatePlayerButton(
+            player2Btn,
+            player2Status,
+            player2,
+            "player2"
+        );
+
+
+        if(
+            selectedPlayer ===
+            "player1" &&
+            !player1
+        ){
+
+            releaseLocalController();
+
+        }
+
+
+        if(
+            selectedPlayer ===
+            "player2" &&
+            !player2
+        ){
+
+            releaseLocalController();
+
+        }
+
+    };
+
+
+    roomRef
+    .child("controllers")
+    .on(
+        "value",
+        playerListener
+    );
+
+}
+
+
+
+/* =========================================================
+   PLAYER BUTTON UI
+========================================================= */
+
+function updatePlayerButton(
+    button,
+    statusElement,
+    data,
+    player
+){
+
+    if(!data){
+
+        button.classList.remove(
+            "unavailable"
+        );
+
+        statusElement.innerText =
+            "Available";
+
+        return;
+
+    }
+
+
+    button.classList.add(
+        "unavailable"
+    );
+
+
+    statusElement.innerText =
+        "IN USE";
+
+}
+
+
+
+/* =========================================================
+   SELECT PLAYER
+========================================================= */
+
+player1Btn.onclick =
+function(){
+
+    selectPlayer(
+        "player1"
+    );
+
+};
+
+
+player2Btn.onclick =
+function(){
+
+    selectPlayer(
+        "player2"
+    );
+
+};
+
+
+
+/* =========================================================
+   CLAIM PLAYER
+========================================================= */
+
+async function selectPlayer(
+    player
+){
+
+    if(
+        !connected ||
+        !roomRef
+    )
+        return;
+
+
+    if(selectedPlayer)
+        return;
+
+
+    const playerRef =
+        roomRef
+        .child("controllers")
+        .child(player);
+
+
+    try{
+
+        const result =
+            await playerRef.transaction(
+                current => {
+
+                    if(current !== null)
+                        return;
+
+                    return {
+
+                        connected:true,
+
+                        at:
+                            firebase.database
+                            .ServerValue
+                            .TIMESTAMP
+
+                    };
+
+                }
+            );
+
+
+        if(!result.committed){
+
+            message.innerText =
+                "❌ Player already in use.";
+
+            return;
+
+        }
+
+
+        selectedPlayer =
+            player;
+
+
+        playerSection.style.display =
+            "none";
+
+
+        controller.style.display =
+            "flex";
+
+
+        if(
+            player ===
+            "player1"
+        ){
+
+            selectedPlayerText.innerText =
+                "🔵 PLAYER 1";
+
+        }
+        else{
+
+            selectedPlayerText.innerText =
+                "🔴 PLAYER 2";
+
+        }
+
+
+        message.innerText =
+            "Controller Ready";
+
+
+        startPresence();
+
+
+        /*
+           START PHOTOSENSOR
+        */
+
+        startPhotoSensor();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        message.innerText =
+            "Unable to select player.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   PRESENCE
+========================================================= */
+
+function startPresence(){
+
+    if(
+        !roomRef ||
+        !selectedPlayer
+    )
+        return;
+
+
+    presenceRef =
+        roomRef
+        .child("controllers")
+        .child(selectedPlayer);
+
+
+    presenceRef
+    .onDisconnect()
+    .remove();
+
+
+    presenceRef.update({
+
+        connected:true,
+
+        at:
+            firebase.database
+            .ServerValue
+            .TIMESTAMP
+
+    });
+
+}
+
+
+
+/* =========================================================
+   RELEASE LOCAL CONTROLLER
+========================================================= */
+
+function releaseLocalController(){
+
+    if(
+        presenceRef &&
+        selectedPlayer
+    ){
+
+        presenceRef
+        .remove()
+        .catch(()=>{});
+
+    }
+
+
+    stopPhotoSensor();
+
+
+    selectedPlayer =
+        "";
+
+
+    presenceRef =
+        null;
+
+
+    controller.style.display =
+        "none";
+
+
+    playerSection.style.display =
+        "block";
+
+
+    message.innerText =
+        "Player is no longer available.";
+
+}
+
+
+
+/* =========================================================
+   QUIZ STATE
+========================================================= */
+
+function listenQuizState(){
+
+    if(!roomRef)
+        return;
+
+
+    if(stateListener){
+
+        roomRef
+        .child("state")
+        .off(
+            "value",
+            stateListener
+        );
+
+    }
+
+
+    stateListener =
+    function(snap){
+
+        const state =
+            snap.val();
+
+
+        if(!state)
+            return;
+
+
+        if(
+            state.phase ===
+            "QUIZ_FINISHED"
+        ){
+
+            message.innerText =
+                "QUIZ FINISHED";
+
+            return;
+
+        }
+
+    };
+
+
+    roomRef
+    .child("state")
+    .on(
+        "value",
+        stateListener
+    );
+
+}
+
+
+
+/* =========================================================
+   SEND REMOTE COMMAND
+========================================================= */
+
+async function sendCommand(
+    command
+){
+
+    if(
+        !connected ||
+        !roomRef ||
+        !selectedPlayer
+    ){
+
+        message.innerText =
+            "Controller not ready.";
+
+        return;
+
+    }
+
+
+    try{
+
+        await roomRef
+        .child("remoteButton")
+        .set({
+
+            command:
+                command,
+
+            player:
+                selectedPlayer,
+
+            timestamp:
+                firebase.database
+                .ServerValue
+                .TIMESTAMP
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        message.innerText =
+            "Command failed.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   ABCD BUTTONS
+========================================================= */
+
+document
+.querySelectorAll(".choice-btn")
+.forEach(button => {
+
+    button.onclick =
+    function(){
+
+        const choice =
+            button.dataset.choice;
+
+
+        sendCommand(
+            choice
+        );
+
+
+        button.classList.add(
+            "active"
+        );
+
+
+        setTimeout(
+            ()=>{
+                button.classList.remove(
+                    "active"
                 );
+            },
+            150
+        );
 
-                return;
+    };
+
+});
+
+
+
+/* =========================================================
+   BUZZ LOCK
+========================================================= */
+
+let buzzLocked =
+    false;
+
+
+
+/* =========================================================
+   BUZZ FUNCTION
+========================================================= */
+
+function doBuzz(
+    source="manual"
+){
+
+    if(
+        !connected ||
+        !selectedPlayer
+    )
+        return;
+
+
+    /*
+       Local debounce.
+    */
+
+    if(buzzLocked)
+        return;
+
+
+    buzzLocked =
+        true;
+
+
+    const team =
+        selectedPlayer ===
+        "player1"
+            ? "TEAM1"
+            : "TEAM2";
+
+
+    sendCommand(
+        team
+    );
+
+
+    buzzBtn.classList.add(
+        "sent"
+    );
+
+
+    buzzBtn.innerText =
+        source === "sensor"
+            ? "📱 BUZZED!"
+            : "BUZZED!";
+
+
+    if(source === "sensor"){
+
+        message.innerText =
+            "📱 PHOTOSENSOR BUZZ!";
+
+    }
+    else{
+
+        message.innerText =
+            "BUZZ SENT";
+
+    }
+
+
+    setTimeout(
+        ()=>{
+
+            buzzLocked =
+                false;
+
+
+            buzzBtn.classList.remove(
+                "sent"
+            );
+
+
+            buzzBtn.innerText =
+                "BUZZ";
+
+        },
+        300
+    );
+
+}
+
+
+
+/* =========================================================
+   MANUAL BUZZ
+========================================================= */
+
+buzzBtn.onclick =
+function(){
+
+    doBuzz(
+        "manual"
+    );
+
+};
+
+
+
+/* =========================================================
+   PHOTOSENSOR
+========================================================= */
+
+function startPhotoSensor(){
+
+    if(!selectedPlayer)
+        return;
+
+
+    /*
+       Already started.
+    */
+
+    if(lightSensorStarted)
+        return;
+
+
+    sensorStatus.innerText =
+        "Photosensor: Checking...";
+
+
+    sensorStatus.className =
+        "sensor-status warning";
+
+
+    /*
+       Check browser support.
+    */
+
+    if(
+        !("AmbientLightSensor" in window)
+    ){
+
+        lightSensorStarted =
+            false;
+
+
+        sensorStatus.innerText =
+            "Photosensor: Not supported";
+
+
+        sensorStatus.className =
+            "sensor-status error";
+
+
+        message.innerText =
+            "Photosensor is not supported by this browser.";
+
+        return;
+
+    }
+
+
+    try{
+
+        lightSensor =
+            new AmbientLightSensor({
+                frequency:10
+            });
+
+
+        lightSensor.addEventListener(
+            "reading",
+            function(){
+
+                const lux =
+                    lightSensor.illuminance;
+
+
+                lastLightValue =
+                    lux;
+
+
+                /*
+                   Sensor ready.
+                */
+
+                sensorStatus.innerText =
+                    "☀️ Light: "+
+                    lux.toFixed(1)+
+                    " lux";
+
+
+                sensorStatus.className =
+                    "sensor-status ready";
+
+
+                /*
+                   =================================
+                   NATATAKPAN
+                   =================================
+                */
+
+                if(
+                    lux <=
+                    LIGHT_THRESHOLD
+                ){
+
+                    const now =
+                        Date.now();
+
+
+                    /*
+                       Prevent repeated buzz.
+                    */
+
+                    if(
+                        lightBuzzReady &&
+                        now -
+                        lastLightBuzzTime >=
+                        LIGHT_BUZZ_COOLDOWN
+                    ){
+
+                        lightBuzzReady =
+                            false;
+
+
+                        lastLightBuzzTime =
+                            now;
+
+
+                        /*
+                           AUTOMATIC BUZZ
+                        */
+
+                        doBuzz(
+                            "sensor"
+                        );
+
+                    }
+
+                }
+
+
+                /*
+                   =================================
+                   MALIWANAG NA ULIT
+                   =================================
+                */
+
+                if(
+                    lux >=
+                    LIGHT_RESET
+                ){
+
+                    lightBuzzReady =
+                        true;
+
+                }
 
             }
+        );
+
+
+        lightSensor.addEventListener(
+            "error",
+            function(event){
+
+                console.error(
+                    "Ambient light sensor error:",
+                    event.error
+                );
+
+
+                sensorStatus.innerText =
+                    "Photosensor: Access denied";
+
+
+                sensorStatus.className =
+                    "sensor-status error";
+
+
+                message.innerText =
+                    "Photosensor permission denied.";
+
+            }
+        );
+
+
+        lightSensor.start();
+
+
+        lightSensorStarted =
+            true;
+
+
+        sensorStatus.innerText =
+            "☀️ Photosensor READY";
+
+
+        sensorStatus.className =
+            "sensor-status ready";
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Photosensor error:",
+            error
+        );
+
+
+        lightSensorStarted =
+            false;
+
+
+        sensorStatus.innerText =
+            "Photosensor: Failed";
+
+
+        sensorStatus.className =
+            "sensor-status error";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   STOP PHOTOSENSOR
+========================================================= */
+
+function stopPhotoSensor(){
+
+    if(lightSensor){
+
+        try{
+
+            lightSensor.stop();
+
+        }
+        catch(error){
+
+            console.error(error);
 
         }
 
     }
 
 
-    /* Clean imported data */
-
-    const imported =
-        parsed.map(q => ({
-
-            question:
-                q.question.trim(),
-
-            choices:
-                q.choices.map(
-                    choice => choice.trim()
-                ),
-
-            answer:
-                q.answer
-
-        }));
+    lightSensor =
+        null;
 
 
-    /*
-       ADD IMPORTED QUESTIONS
-       TO EXISTING QUESTIONS
-    */
-
-    questions =
-        questions.concat(imported);
+    lightSensorStarted =
+        false;
 
 
-    renderQuestions();
-
-    generateJSON(false);
-
-
-    showSuccess(
-        "✅ " +
-        imported.length +
-        " question(s) imported! Total: " +
-        questions.length
-    );
+    lightBuzzReady =
+        true;
 
 
-    /* Keep paste box so user can see what was imported */
+    lastLightValue =
+        null;
+
+
+    sensorStatus.innerText =
+        "Photosensor: Off";
+
+
+    sensorStatus.className =
+        "sensor-status";
 
 }
 
 
-/* =====================================================
-   CLEAR PASTE
-===================================================== */
 
-function clearPaste(){
+/* =========================================================
+   KEYBOARD
+   Z X C V = A B C D
+========================================================= */
 
-    pasteInput.value = "";
-
-    showSuccess(
-        "Paste box cleared."
-    );
-
-}
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function showSuccess(text){
-
-    status.innerText = text;
-
-    status.className =
-        "status success";
-
-}
-
-
-function showError(text){
-
-    status.innerText = text;
-
-    status.className =
-        "status error";
-
-}
-
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function escapeHTML(text){
-
-    return String(text)
-
-        .replace(/&/g,"&amp;")
-
-        .replace(/</g,"&lt;")
-
-        .replace(/>/g,"&gt;")
-
-        .replace(/"/g,"&quot;")
-
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =====================================================
-   INITIAL
-===================================================== */
-
-renderQuestions();
-
-
-/* =====================================================
-   ENTER KEY SHORTCUT
-===================================================== */
-
-/*
-   Ctrl + Enter sa question box
-   = ADD QUESTION
-*/
-
-questionInput.addEventListener(
+document.addEventListener(
     "keydown",
     function(event){
 
+        if(!selectedPlayer)
+            return;
+
+
+        const key =
+            event.key.toLowerCase();
+
+
+        const map = {
+
+            z:"A",
+            x:"B",
+            c:"C",
+            v:"D"
+
+        };
+
+
+        if(map[key]){
+
+            event.preventDefault();
+
+
+            sendCommand(
+                map[key]
+            );
+
+
+            const button =
+                document.querySelector(
+                    `[data-choice="${map[key]}"]`
+                );
+
+
+            if(button){
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                setTimeout(
+                    ()=>{
+                        button.classList.remove(
+                            "active"
+                        );
+                    },
+                    150
+                );
+
+            }
+
+        }
+
+
+        /*
+           SPACE = BUZZ
+        */
+
         if(
-            event.ctrlKey &&
-            event.key === "Enter"
+            event.code ===
+            "Space"
         ){
 
             event.preventDefault();
 
-            addQuestion();
+            buzzBtn.click();
 
         }
 
@@ -1472,23 +1883,45 @@ questionInput.addEventListener(
 );
 
 
-/*
-   Ctrl + Enter sa paste box
-   = IMPORT
-*/
 
-pasteInput.addEventListener(
-    "keydown",
-    function(event){
+/* =========================================================
+   FIREBASE CONNECTION
+========================================================= */
+
+db.ref(".info/connected")
+.on(
+    "value",
+    snap => {
+
+        if(!snap.val())
+            return;
+
+
+        console.log(
+            "Firebase connection active"
+        );
+
+    }
+);
+
+
+
+/* =========================================================
+   PAGE CLOSE
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    function(){
 
         if(
-            event.ctrlKey &&
-            event.key === "Enter"
+            presenceRef &&
+            selectedPlayer
         ){
 
-            event.preventDefault();
-
-            importPastedQuestions();
+            presenceRef
+            .onDisconnect()
+            .remove();
 
         }
 
@@ -1497,7 +1930,5 @@ pasteInput.addEventListener(
 
 </script>
 
-
 </body>
-
 </html>
